@@ -9,444 +9,353 @@
                  services:DialogCloser.DialogResult="{Binding DialogResult}"
                  mc:Ignorable="d"
                  Title="Вход в систему"
-                 Width="920"
-                 Height="600"
-                 MinWidth="920"
-                 MinHeight="600"
-                 ResizeMode="NoResize"
+                 Width="1200"
+                 Height="780"
+                 MinWidth="900"
+                 MinHeight="650"
                  WindowStartupLocation="CenterScreen"
-                 ShowMaxRestoreButton="False"
-                 ShowMinButton="True"
+                 TitleBarHeight="34"
                  ShowIconOnTitleBar="False"
-                 TitleBarHeight="38"
-                 GlowBrush="{DynamicResource StorageBrandMidBrush}"
-                 NonActiveGlowBrush="{DynamicResource StorageOutlineBrush}"
-                 BorderBrush="{DynamicResource StorageOutlineBrush}"
-                 Background="{DynamicResource StorageShellBrush}">
-    <Grid Background="{DynamicResource StorageShellBrush}">
-        <Border Margin="24"
-                Style="{StaticResource StorageCardStyle}"
-                CornerRadius="24"
-                materialDesign:ElevationAssist.Elevation="Dp8">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="0.9*" />
-                    <ColumnDefinition Width="1.25*" />
-                </Grid.ColumnDefinitions>
+                 ShowMaxRestoreButton="True"
+                 GlowBrush="#665EA7FF"
+                 NonActiveGlowBrush="#303D466B"
+                 BorderBrush="#384E5A84"
+                 WindowTitleBrush="#52080D1C"
+                 NonActiveWindowTitleBrush="#68080D1C"
+                 TitleForeground="#DDE6FF"
+                 Background="#080C18">
+    <mah:MetroWindow.Resources>
+        <LinearGradientBrush x:Key="GlassPanelBrush" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#D12A4775" Offset="0" />
+            <GradientStop Color="#C5203863" Offset="0.48" />
+            <GradientStop Color="#D0142347" Offset="1" />
+        </LinearGradientBrush>
 
-                <Border Grid.Column="0" CornerRadius="23,0,0,23">
-                    <Border.Background>
-                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                            <GradientStop Color="{DynamicResource StorageBrandStartColor}" Offset="0" />
-                            <GradientStop Color="{DynamicResource StorageBrandMidColor}" Offset="0.58" />
-                            <GradientStop Color="{DynamicResource StorageBrandEndColor}" Offset="1" />
-                        </LinearGradientBrush>
-                    </Border.Background>
+        <Style x:Key="GlassIconButtonStyle"
+               TargetType="Button"
+               BasedOn="{StaticResource MaterialDesignToolButton}">
+            <Setter Property="Width" Value="42" />
+            <Setter Property="Height" Value="42" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Foreground" Value="#F4F6FF" />
+            <Setter Property="Background" Value="#16FFFFFF" />
+        </Style>
 
-                    <Grid Margin="36">
-                        <Ellipse Width="190"
-                                 Height="190"
-                                 Margin="-118,-116,0,0"
-                                 HorizontalAlignment="Left"
-                                 VerticalAlignment="Top"
-                                 Fill="#16FFFFFF" />
-                        <Ellipse Width="150"
-                                 Height="150"
-                                 Margin="0,0,-92,-92"
-                                 HorizontalAlignment="Right"
-                                 VerticalAlignment="Bottom"
-                                 Fill="#14FFFFFF" />
+        <Style x:Key="GlassPrimaryButtonStyle"
+               TargetType="Button"
+               BasedOn="{StaticResource MaterialDesignRaisedButton}">
+            <Setter Property="Height" Value="52" />
+            <Setter Property="Padding" Value="24,0" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Background" Value="#FAFAFC" />
+            <Setter Property="Foreground" Value="#202541" />
+        </Style>
 
-                        <Grid>
+        <Style x:Key="GlassSecondaryButtonStyle"
+               TargetType="Button"
+               BasedOn="{StaticResource MaterialDesignOutlinedButton}">
+            <Setter Property="Height" Value="50" />
+            <Setter Property="Padding" Value="20,0" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Foreground" Value="#F4F6FF" />
+            <Setter Property="BorderBrush" Value="#55FFFFFF" />
+        </Style>
+    </mah:MetroWindow.Resources>
+
+    <Grid Background="#102A5C">
+
+        <Border Width="540"
+                MaxHeight="680"
+                Margin="40"
+                Padding="1"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                CornerRadius="29"
+                BorderBrush="#42FFFFFF"
+                BorderThickness="1"
+                Background="#1CFFFFFF">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="42"
+                                  ShadowDepth="0"
+                                  Opacity="0.58"
+                                  Color="#050713" />
+            </Border.Effect>
+
+            <Border CornerRadius="28" Background="{StaticResource GlassPanelBrush}">
+                <Grid>
+                    <Ellipse Width="210"
+                             Height="210"
+                             Margin="-92,-118,0,0"
+                             HorizontalAlignment="Left"
+                             VerticalAlignment="Top"
+                             Fill="#12FFFFFF" />
+                    <Ellipse Width="180"
+                             Height="180"
+                             Margin="0,0,-104,-96"
+                             HorizontalAlignment="Right"
+                             VerticalAlignment="Bottom"
+                             Fill="#0D4DA5FF" />
+
+                    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                  HorizontalScrollBarVisibility="Disabled">
+                        <Grid Margin="50,34,50,32">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
-                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
 
-                            <StackPanel>
-                                <Border Width="70"
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <Button Command="{Binding ToggleThemeCommand}"
+                                        Style="{StaticResource GlassIconButtonStyle}"
+                                        ToolTip="Переключить тему">
+                                    <Grid>
+                                        <materialDesign:PackIcon Width="20" Height="20" Kind="WeatherNight">
+                                            <materialDesign:PackIcon.Style>
+                                                <Style TargetType="materialDesign:PackIcon">
+                                                    <Setter Property="Visibility" Value="Visible" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsDarkTheme}" Value="True">
+                                                            <Setter Property="Visibility" Value="Collapsed" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </materialDesign:PackIcon.Style>
+                                        </materialDesign:PackIcon>
+                                        <materialDesign:PackIcon Width="20" Height="20" Kind="WhiteBalanceSunny">
+                                            <materialDesign:PackIcon.Style>
+                                                <Style TargetType="materialDesign:PackIcon">
+                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsDarkTheme}" Value="True">
+                                                            <Setter Property="Visibility" Value="Visible" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </materialDesign:PackIcon.Style>
+                                        </materialDesign:PackIcon>
+                                    </Grid>
+                                </Button>
+
+                                <Border Grid.Column="1"
+                                        Width="70"
                                         Height="70"
-                                        HorizontalAlignment="Left"
-                                        CornerRadius="20"
-                                        Background="#22FFFFFF">
-                                    <materialDesign:PackIcon Width="40"
-                                                             Height="40"
+                                        HorizontalAlignment="Center"
+                                        CornerRadius="22"
+                                        Background="#18FFFFFF"
+                                        BorderBrush="#32FFFFFF"
+                                        BorderThickness="1">
+                                    <materialDesign:PackIcon Width="39"
+                                                             Height="39"
                                                              HorizontalAlignment="Center"
                                                              VerticalAlignment="Center"
-                                                             Foreground="White"
+                                                             Foreground="#F5F7FF"
                                                              Kind="Warehouse" />
                                 </Border>
 
-                                <TextBlock Margin="0,24,0,0"
-                                           Text="Склад"
-                                           FontSize="32"
-                                           FontWeight="Bold"
-                                           Foreground="White" />
-                                <TextBlock Margin="0,8,0,0"
-                                           Text="Рабочее пространство учёта и движения материальных ценностей"
-                                           FontSize="14"
-                                           LineHeight="21"
-                                           TextWrapping="Wrap"
-                                           Foreground="#E4F5F6" />
-                            </StackPanel>
-
-                            <StackPanel Grid.Row="1" VerticalAlignment="Center">
-                                <Border Padding="15,12"
-                                        CornerRadius="14"
-                                        Background="#18FFFFFF">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="*" />
-                                        </Grid.ColumnDefinitions>
-                                        <materialDesign:PackIcon Width="22"
-                                                                 Height="22"
-                                                                 VerticalAlignment="Center"
-                                                                 Foreground="{DynamicResource StorageAccentBrush}"
-                                                                 Kind="ShieldLockOutline" />
-                                        <StackPanel Grid.Column="1" Margin="12,0,0,0">
-                                            <TextBlock Text="Защищённый вход"
-                                                       FontSize="14"
-                                                       FontWeight="SemiBold"
-                                                       Foreground="White" />
-                                            <TextBlock Margin="0,3,0,0"
-                                                       Text="Keycloak · OpenID Connect"
-                                                       FontSize="12"
-                                                       Foreground="#D5EEF0" />
-                                        </StackPanel>
-                                    </Grid>
-                                </Border>
-
-                                <Border Margin="0,12,0,0"
-                                        Padding="15,12"
-                                        CornerRadius="14"
-                                        Background="#18FFFFFF">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="*" />
-                                        </Grid.ColumnDefinitions>
-                                        <materialDesign:PackIcon Width="22"
-                                                                 Height="22"
-                                                                 VerticalAlignment="Center"
-                                                                 Foreground="{DynamicResource StorageAccentBrush}"
-                                                                 Kind="DatabaseCheckOutline" />
-                                        <StackPanel Grid.Column="1" Margin="12,0,0,0">
-                                            <TextBlock Text="API склада"
-                                                       FontSize="14"
-                                                       FontWeight="SemiBold"
-                                                       Foreground="White" />
-                                            <TextBlock Margin="0,3,0,0"
-                                                       Text="Проверка профиля после входа"
-                                                       FontSize="12"
-                                                       Foreground="#D5EEF0" />
-                                        </StackPanel>
-                                    </Grid>
-                                </Border>
-                            </StackPanel>
-
-                            <Border Grid.Row="2"
-                                    Padding="14,11"
-                                    CornerRadius="14"
-                                    Background="#1A000000">
-                                <StackPanel Orientation="Horizontal">
-                                    <Ellipse Width="9"
-                                             Height="9"
-                                             VerticalAlignment="Center"
-                                             Fill="{DynamicResource StorageAccentBrush}" />
-                                    <TextBlock Margin="10,0,0,0"
-                                               VerticalAlignment="Center"
-                                               Text="Подключение настраивается перед входом"
-                                               FontSize="11"
-                                               Foreground="White" />
-                                </StackPanel>
-                            </Border>
-                        </Grid>
-                    </Grid>
-                </Border>
-
-                <Grid Grid.Column="1" Margin="46,36">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-
-                        <StackPanel>
-                            <TextBlock Text="Добро пожаловать"
-                                       FontSize="28"
-                                       FontWeight="Bold"
-                                       Foreground="{DynamicResource StorageTextBrush}" />
-                            <TextBlock Margin="0,8,0,0"
-                                       Text="Авторизуйтесь через корпоративную страницу входа"
-                                       FontSize="13"
-                                       Foreground="{DynamicResource StorageMutedTextBrush}" />
-                        </StackPanel>
-
-                        <Button Grid.Column="1"
-                                Command="{Binding ToggleThemeCommand}"
-                                Style="{StaticResource StorageIconButtonStyle}"
-                                ToolTip="Переключить тему">
-                            <Grid>
-                                <materialDesign:PackIcon Width="21" Height="21" Kind="WeatherNight">
-                                    <materialDesign:PackIcon.Style>
-                                        <Style TargetType="materialDesign:PackIcon">
-                                            <Setter Property="Visibility" Value="Visible" />
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding IsDarkTheme}" Value="True">
-                                                    <Setter Property="Visibility" Value="Collapsed" />
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </materialDesign:PackIcon.Style>
-                                </materialDesign:PackIcon>
-                                <materialDesign:PackIcon Width="21" Height="21" Kind="WhiteBalanceSunny">
-                                    <materialDesign:PackIcon.Style>
-                                        <Style TargetType="materialDesign:PackIcon">
-                                            <Setter Property="Visibility" Value="Collapsed" />
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding IsDarkTheme}" Value="True">
-                                                    <Setter Property="Visibility" Value="Visible" />
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </materialDesign:PackIcon.Style>
-                                </materialDesign:PackIcon>
+                                <Button x:Name="ServerSettingsButton"
+                                        Grid.Column="2"
+                                        Command="{Binding OpenSettingsCommand}"
+                                        IsEnabled="{Binding IsNotBusy}"
+                                        Style="{StaticResource GlassIconButtonStyle}"
+                                        ToolTip="Настроить API">
+                                    <materialDesign:PackIcon Width="20" Height="20" Kind="CogOutline" />
+                                </Button>
                             </Grid>
-                        </Button>
-                    </Grid>
 
-                    <Border Grid.Row="1"
-                            Margin="0,28,0,0"
-                            Padding="15,12"
-                            Style="{StaticResource StorageCardStyle}"
-                            Background="{DynamicResource StorageSurfaceMutedBrush}">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Row="1"
+                                       Margin="0,22,0,0"
+                                       HorizontalAlignment="Center"
+                                       Text="Вход в систему"
+                                       FontSize="34"
+                                       FontWeight="Light"
+                                       Foreground="#FAFBFF" />
 
-                            <Border Width="42"
-                                    Height="42"
-                                    CornerRadius="12"
-                                    Background="{DynamicResource StorageInfoSurfaceBrush}">
-                                <materialDesign:PackIcon Width="21"
-                                                         Height="21"
-                                                         HorizontalAlignment="Center"
-                                                         VerticalAlignment="Center"
-                                                         Foreground="{DynamicResource StorageInfoBrush}"
-                                                         Kind="ServerNetwork" />
-                            </Border>
-
-                            <StackPanel Grid.Column="1"
-                                        Margin="12,0"
-                                        VerticalAlignment="Center">
-                                <TextBlock Text="Активный сервер"
-                                           FontSize="11"
-                                           Foreground="{DynamicResource StorageMutedTextBrush}" />
-                                <TextBlock Margin="0,3,0,0"
-                                           Text="{Binding ActiveServerAddress}"
-                                           FontSize="13"
-                                           FontWeight="SemiBold"
-                                           TextTrimming="CharacterEllipsis"
-                                           Foreground="{DynamicResource StorageTextBrush}"
-                                           ToolTip="{Binding ActiveServerAddress}" />
-                            </StackPanel>
-
-                            <Button x:Name="ServerSettingsButton"
-                                    Grid.Column="2"
-                                    Command="{Binding OpenSettingsCommand}"
-                                    IsEnabled="{Binding IsNotBusy}"
-                                    Style="{StaticResource StorageIconButtonStyle}"
-                                    ToolTip="Настроить адрес API">
-                                <materialDesign:PackIcon Width="21" Height="21" Kind="CogOutline" />
-                            </Button>
-                        </Grid>
-                    </Border>
-
-                    <Border Grid.Row="2"
-                            Margin="0,16,0,0"
-                            Padding="14,11"
-                            CornerRadius="13"
-                            Background="{DynamicResource StorageInfoSurfaceBrush}">
-                        <StackPanel Orientation="Horizontal">
-                            <materialDesign:PackIcon Width="20"
-                                                     Height="20"
-                                                     VerticalAlignment="Center"
-                                                     Foreground="{DynamicResource StorageInfoBrush}"
-                                                     Kind="OpenInNew" />
-                            <TextBlock Margin="10,0,0,0"
-                                       VerticalAlignment="Center"
-                                       Text="Страница входа откроется в браузере"
-                                       FontSize="12"
-                                       Foreground="{DynamicResource StorageInfoBrush}" />
-                        </StackPanel>
-                    </Border>
-
-                    <Border Grid.Row="3"
-                            Margin="0,12,0,0"
-                            Padding="14,11"
-                            CornerRadius="13"
-                            Background="{DynamicResource StorageDangerSurfaceBrush}"
-                            Visibility="{Binding HasError, Converter={StaticResource BooleanToVisibilityConverter}}">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <materialDesign:PackIcon Width="20"
-                                                     Height="20"
-                                                     Foreground="{DynamicResource StorageDangerBrush}"
-                                                     Kind="AlertCircleOutline" />
-                            <TextBlock Grid.Column="1"
-                                       Margin="10,0,0,0"
-                                       Text="{Binding ErrorMessage}"
+                            <TextBlock Grid.Row="2"
+                                       Margin="18,9,18,0"
+                                       HorizontalAlignment="Center"
+                                       Text="Войдите, чтобы получить доступ к складу"
+                                       TextAlignment="Center"
                                        TextWrapping="Wrap"
-                                       FontSize="12"
-                                       LineHeight="18"
-                                       Foreground="{DynamicResource StorageDangerBrush}" />
-                        </Grid>
-                    </Border>
+                                       FontSize="13"
+                                       LineHeight="20"
+                                       Foreground="#BFC7E4" />
 
-                    <StackPanel Grid.Row="4" Margin="0,22,0,0">
-                        <Button Command="{Binding SignInCommand}"
-                                IsDefault="True"
-                                IsEnabled="{Binding IsNotBusy}"
-                                Style="{StaticResource StoragePrimaryButtonStyle}">
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                <materialDesign:PackIcon Width="21"
-                                                         Height="21"
-                                                         VerticalAlignment="Center"
-                                                         Foreground="White"
-                                                         Kind="LoginVariant" />
-                                <TextBlock Margin="10,0,0,0"
-                                           VerticalAlignment="Center"
-                                           Text="Войти через браузер"
-                                           Foreground="White" />
-                            </StackPanel>
-                        </Button>
-
-                        <Button Margin="0,10,0,0"
-                                Content="Войти под другой учётной записью"
-                                Command="{Binding SignInAsDifferentUserCommand}"
-                                IsEnabled="{Binding IsNotBusy}"
-                                Style="{StaticResource StorageSecondaryButtonStyle}" />
-                    </StackPanel>
-
-                    <StackPanel Grid.Row="5"
-                                Margin="0,16,0,0"
-                                Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}">
-                        <ProgressBar Height="5"
-                                     IsIndeterminate="True"
-                                     Foreground="{DynamicResource StorageBrandMidBrush}" />
-                        <TextBlock Margin="0,8,0,0"
-                                   HorizontalAlignment="Center"
-                                   Text="Ожидаем завершения авторизации…"
-                                   FontSize="12"
-                                   Foreground="{DynamicResource StorageMutedTextBrush}" />
-                    </StackPanel>
-
-                    <TextBlock Grid.Row="6"
-                               Margin="0,0,0,2"
-                               HorizontalAlignment="Center"
-                               VerticalAlignment="Bottom"
-                               Text="Storage Client · стартовый макет"
-                               FontSize="11"
-                               Foreground="{DynamicResource StorageMutedTextBrush}" />
-
-                    <Popup Grid.Row="1"
-                           IsOpen="{Binding IsSettingsOpen, Mode=TwoWay}"
-                           PlacementTarget="{Binding ElementName=ServerSettingsButton}"
-                           Placement="Bottom"
-                           HorizontalOffset="-320"
-                           VerticalOffset="8"
-                           AllowsTransparency="True"
-                           StaysOpen="False">
-                        <Border Width="380"
-                                Padding="20"
-                                Style="{StaticResource StorageCardStyle}"
-                                Background="{DynamicResource StorageSurfaceBrush}"
-                                materialDesign:ElevationAssist.Elevation="Dp8">
-                            <StackPanel>
+                            <Border Grid.Row="3"
+                                    Margin="0,18,0,0"
+                                    Padding="13,10"
+                                    CornerRadius="13"
+                                    Background="#31B42318"
+                                    BorderBrush="#45FF9B94"
+                                    BorderThickness="1"
+                                    Visibility="{Binding HasError, Converter={StaticResource BooleanToVisibilityConverter}}">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
-                                    <StackPanel>
-                                        <TextBlock Text="Подключение к API"
-                                                   FontSize="18"
-                                                   FontWeight="SemiBold"
-                                                   Foreground="{DynamicResource StorageTextBrush}" />
-                                        <TextBlock Margin="0,5,0,0"
-                                                   Text="Новый адрес применяется после перезапуска"
-                                                   FontSize="12"
-                                                   Foreground="{DynamicResource StorageMutedTextBrush}" />
-                                    </StackPanel>
-                                    <Button Grid.Column="1"
-                                            Command="{Binding CloseSettingsCommand}"
-                                            Style="{StaticResource StorageIconButtonStyle}"
-                                            ToolTip="Закрыть">
-                                        <materialDesign:PackIcon Width="20" Height="20" Kind="Close" />
-                                    </Button>
-                                </Grid>
-
-                                <TextBox Margin="0,18,0,0"
-                                         Text="{Binding ServerAddress, UpdateSourceTrigger=PropertyChanged}"
-                                         materialDesign:HintAssist.Hint="Адрес API"
-                                         Style="{StaticResource StorageOutlinedTextBoxStyle}" />
-
-                                <TextBlock Margin="3,7,3,0"
-                                           Text="{Binding ServerAddressValidationMessage}"
-                                           TextWrapping="Wrap"
-                                           FontSize="11"
-                                           Foreground="{DynamicResource StorageDangerBrush}">
-                                    <TextBlock.Style>
-                                        <Style TargetType="TextBlock">
-                                            <Setter Property="Visibility" Value="Collapsed" />
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding IsServerAddressValid}" Value="False">
-                                                    <Setter Property="Visibility" Value="Visible" />
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </TextBlock.Style>
-                                </TextBlock>
-
-                                <Border Margin="0,12,0,0"
-                                        Padding="12,9"
-                                        CornerRadius="11"
-                                        Background="{DynamicResource StorageWarningSurfaceBrush}"
-                                        Visibility="{Binding IsServerAddressModified, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                    <TextBlock Text="Изменение адреса потребует перезапуска клиента."
-                                               FontSize="11"
+                                    <materialDesign:PackIcon Width="19"
+                                                             Height="19"
+                                                             VerticalAlignment="Top"
+                                                             Foreground="#FFC0BC"
+                                                             Kind="AlertCircleOutline" />
+                                    <TextBlock Grid.Column="1"
+                                               Margin="9,0,0,0"
+                                               Text="{Binding ErrorMessage}"
                                                TextWrapping="Wrap"
-                                               Foreground="{DynamicResource StorageWarningBrush}" />
-                                </Border>
+                                               FontSize="11"
+                                               LineHeight="17"
+                                               Foreground="#FFE1DE" />
+                                </Grid>
+                            </Border>
 
-                                <Button Margin="0,16,0,0"
-                                        HorizontalAlignment="Right"
-                                        Content="Сохранить и перезапустить"
-                                        Command="{Binding SaveServerAndRestartCommand}"
-                                        Style="{StaticResource StoragePrimaryButtonStyle}" />
-                            </StackPanel>
-                        </Border>
-                    </Popup>
+                            <Button Grid.Row="4"
+                                    Margin="0,22,0,0"
+                                    Command="{Binding SignInCommand}"
+                                    IsDefault="True"
+                                    IsEnabled="{Binding IsNotBusy}"
+                                    Style="{StaticResource GlassPrimaryButtonStyle}">
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <materialDesign:PackIcon Width="21"
+                                                             Height="21"
+                                                             VerticalAlignment="Center"
+                                                             Foreground="#285FD6"
+                                                             Kind="ShieldKeyOutline" />
+                                    <TextBlock Margin="10,0,0,0"
+                                               VerticalAlignment="Center"
+                                               Text="Войти через Keycloak"
+                                               Foreground="#202541" />
+                                </StackPanel>
+                            </Button>
+
+                            <Button Grid.Row="5"
+                                    Margin="0,12,0,0"
+                                    Command="{Binding SignInAsDifferentUserCommand}"
+                                    IsEnabled="{Binding IsNotBusy}"
+                                    Style="{StaticResource GlassSecondaryButtonStyle}">
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <materialDesign:PackIcon Width="20"
+                                                             Height="20"
+                                                             VerticalAlignment="Center"
+                                                             Foreground="#C9C4FF"
+                                                             Kind="AccountSwitchOutline" />
+                                    <TextBlock Margin="10,0,0,0"
+                                               VerticalAlignment="Center"
+                                               Text="Выбрать другую учётную запись"
+                                               Foreground="#F4F6FF" />
+                                </StackPanel>
+                            </Button>
+
+                            <Grid Grid.Row="6" Margin="0,18,0,0">
+                                <StackPanel Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                    <ProgressBar Height="4"
+                                                 IsIndeterminate="True"
+                                                 Foreground="#5EA1FF" />
+                                    <TextBlock Margin="0,8,0,0"
+                                               HorizontalAlignment="Center"
+                                               Text="Ожидаем завершения авторизации…"
+                                               FontSize="11"
+                                               Foreground="#AEB7D7" />
+                                </StackPanel>
+
+                            </Grid>
+
+                            <Popup IsOpen="{Binding IsSettingsOpen, Mode=TwoWay}"
+                                   PlacementTarget="{Binding ElementName=ServerSettingsButton}"
+                                   Placement="Bottom"
+                                   HorizontalOffset="-330"
+                                   VerticalOffset="8"
+                                   AllowsTransparency="True"
+                                   StaysOpen="False">
+                                <Border Width="390"
+                                        Padding="20"
+                                        CornerRadius="18"
+                                        Background="{DynamicResource StorageSurfaceBrush}"
+                                        BorderBrush="{DynamicResource StorageOutlineBrush}"
+                                        BorderThickness="1"
+                                        materialDesign:ElevationAssist.Elevation="Dp8">
+                                    <StackPanel>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel>
+                                                <TextBlock Text="Подключение к API"
+                                                           FontSize="18"
+                                                           FontWeight="SemiBold"
+                                                           Foreground="{DynamicResource StorageTextBrush}" />
+                                                <TextBlock Margin="0,5,0,0"
+                                                           Text="Новый адрес применяется после перезапуска"
+                                                           FontSize="12"
+                                                           Foreground="{DynamicResource StorageMutedTextBrush}" />
+                                            </StackPanel>
+                                            <Button Grid.Column="1"
+                                                    Command="{Binding CloseSettingsCommand}"
+                                                    Style="{StaticResource StorageIconButtonStyle}"
+                                                    ToolTip="Закрыть">
+                                                <materialDesign:PackIcon Width="20" Height="20" Kind="Close" />
+                                            </Button>
+                                        </Grid>
+
+                                        <TextBox Margin="0,18,0,0"
+                                                 Text="{Binding ServerAddress, UpdateSourceTrigger=PropertyChanged}"
+                                                 materialDesign:HintAssist.Hint="Адрес API"
+                                                 Style="{StaticResource StorageOutlinedTextBoxStyle}" />
+
+                                        <TextBlock Margin="3,7,3,0"
+                                                   Text="{Binding ServerAddressValidationMessage}"
+                                                   TextWrapping="Wrap"
+                                                   FontSize="11"
+                                                   Foreground="{DynamicResource StorageDangerBrush}">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsServerAddressValid}" Value="False">
+                                                            <Setter Property="Visibility" Value="Visible" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+
+                                        <Border Margin="0,12,0,0"
+                                                Padding="12,9"
+                                                CornerRadius="11"
+                                                Background="{DynamicResource StorageWarningSurfaceBrush}"
+                                                Visibility="{Binding IsServerAddressModified, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                            <TextBlock Text="Изменение адреса потребует перезапуска клиента."
+                                                       FontSize="11"
+                                                       TextWrapping="Wrap"
+                                                       Foreground="{DynamicResource StorageWarningBrush}" />
+                                        </Border>
+
+                                        <Button Margin="0,16,0,0"
+                                                HorizontalAlignment="Right"
+                                                Content="Сохранить и перезапустить"
+                                                Command="{Binding SaveServerAndRestartCommand}"
+                                                Style="{StaticResource StoragePrimaryButtonStyle}" />
+                                    </StackPanel>
+                                </Border>
+                            </Popup>
+                        </Grid>
+                    </ScrollViewer>
                 </Grid>
-            </Grid>
+            </Border>
         </Border>
     </Grid>
 </mah:MetroWindow>

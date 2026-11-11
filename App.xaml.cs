@@ -54,12 +54,11 @@ public partial class App : Application
 
         if (result == true)
         {
-            IAuthStateService authState = _services.GetRequiredService<IAuthStateService>();
-            MessageBox.Show(
-                $"Вход выполнен: {authState.Username ?? "пользователь"}\nРоль: {authState.Permission}",
-                "Авторизация успешна",
-                MessageBoxButton.OK,
-                MessageBoxImage.Information);
+            MainWindow mainWindow = _services.GetRequiredService<MainWindow>();
+            MainWindow = mainWindow;
+            mainWindow.Closed += (_, _) => Shutdown();
+            mainWindow.Show();
+            return;
         }
 
         Shutdown();
@@ -73,8 +72,11 @@ public partial class App : Application
         services.AddSingleton<IAuthStateService, AuthStateService>();
         services.AddSingleton<IThemeService, ThemeService>();
         services.AddSingleton<IAuthenticationService, OidcAuthenticationService>();
+        services.AddSingleton<IContainerService, ContainerService>();
         services.AddTransient<LoginViewModel>();
         services.AddTransient<LoginWindow>();
+        services.AddTransient<MainViewModel>();
+        services.AddTransient<MainWindow>();
 
         return services.BuildServiceProvider();
     }

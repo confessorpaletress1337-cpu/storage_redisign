@@ -1,0 +1,868 @@
+<mah:MetroWindow x:Class="StorageClient.Redesign.MainWindow"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+                 xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+                 mc:Ignorable="d"
+                 Title="Склад"
+                 Width="1480"
+                 Height="900"
+                 MinWidth="1220"
+                 MinHeight="720"
+                 WindowStartupLocation="CenterScreen"
+                 TitleBarHeight="34"
+                 ShowIconOnTitleBar="False"
+                 GlowBrush="{DynamicResource StorageBrandMidBrush}"
+                 Background="{DynamicResource StorageShellBrush}">
+    <mah:MetroWindow.Resources>
+        <Style x:Key="SidebarItemStyle" TargetType="Button">
+            <Setter Property="Height" Value="46" />
+            <Setter Property="Margin" Value="12,2" />
+            <Setter Property="Padding" Value="14,0" />
+            <Setter Property="HorizontalContentAlignment" Value="Left" />
+            <Setter Property="Foreground" Value="{DynamicResource StorageMutedTextBrush}" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Cursor" Value="Arrow" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Root"
+                                Padding="{TemplateBinding Padding}"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="12">
+                            <ContentPresenter VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Root" Property="Background" Value="{DynamicResource StorageSurfaceMutedBrush}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ActiveSidebarItemStyle"
+               TargetType="Button"
+               BasedOn="{StaticResource SidebarItemStyle}">
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Background" Value="{DynamicResource StorageBrandMidBrush}" />
+        </Style>
+
+        <Style x:Key="CompactIconButtonStyle"
+               TargetType="Button"
+               BasedOn="{StaticResource StorageIconButtonStyle}">
+            <Setter Property="Width" Value="38" />
+            <Setter Property="Height" Value="38" />
+        </Style>
+
+        <Style x:Key="StatCardStyle"
+               TargetType="Border"
+               BasedOn="{StaticResource StorageCardStyle}">
+            <Setter Property="Padding" Value="16,13" />
+            <Setter Property="Margin" Value="0,0,10,0" />
+            <Setter Property="CornerRadius" Value="14" />
+        </Style>
+
+        <Style x:Key="StorageDataGridStyle" TargetType="DataGrid">
+            <Setter Property="Background" Value="{DynamicResource StorageSurfaceBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource StorageTextBrush}" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="GridLinesVisibility" Value="Horizontal" />
+            <Setter Property="HorizontalGridLinesBrush" Value="{DynamicResource StorageOutlineBrush}" />
+            <Setter Property="VerticalGridLinesBrush" Value="Transparent" />
+            <Setter Property="RowBackground" Value="{DynamicResource StorageSurfaceBrush}" />
+            <Setter Property="AlternatingRowBackground" Value="{DynamicResource StorageSurfaceMutedBrush}" />
+            <Setter Property="AlternationCount" Value="2" />
+            <Setter Property="RowHeight" Value="48" />
+            <Setter Property="ColumnHeaderHeight" Value="44" />
+            <Setter Property="HeadersVisibility" Value="Column" />
+            <Setter Property="CanUserAddRows" Value="False" />
+            <Setter Property="CanUserDeleteRows" Value="False" />
+            <Setter Property="CanUserReorderColumns" Value="True" />
+            <Setter Property="CanUserResizeColumns" Value="True" />
+            <Setter Property="CanUserSortColumns" Value="True" />
+            <Setter Property="IsReadOnly" Value="True" />
+            <Setter Property="SelectionMode" Value="Single" />
+            <Setter Property="SelectionUnit" Value="FullRow" />
+            <Setter Property="AutoGenerateColumns" Value="False" />
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+        </Style>
+
+        <Style TargetType="DataGridColumnHeader">
+            <Setter Property="Background" Value="{DynamicResource StorageSurfaceMutedBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource StorageMutedTextBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource StorageOutlineBrush}" />
+            <Setter Property="BorderThickness" Value="0,0,0,1" />
+            <Setter Property="Padding" Value="12,0" />
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+
+        <Style TargetType="DataGridCell">
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        </Style>
+
+        <Style x:Key="DataGridTextStyle" TargetType="TextBlock">
+            <Setter Property="Margin" Value="12,0" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+            <Setter Property="Foreground" Value="{DynamicResource StorageTextBrush}" />
+        </Style>
+
+        <Style x:Key="FilterTextBoxStyle" TargetType="TextBox">
+            <Setter Property="Height" Value="36" />
+            <Setter Property="Padding" Value="10,0" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Foreground" Value="{DynamicResource StorageTextBrush}" />
+            <Setter Property="Background" Value="{DynamicResource StorageSurfaceMutedBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource StorageOutlineBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border x:Name="Border"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="9">
+                            <ScrollViewer x:Name="PART_ContentHost"
+                                          Margin="{TemplateBinding Padding}"
+                                          VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource StorageBrandMidBrush}" />
+                                <Setter TargetName="Border" Property="BorderThickness" Value="2" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SidebarFilterExpanderStyle" TargetType="Expander">
+            <Setter Property="Margin" Value="12,2" />
+            <Setter Property="Foreground" Value="{DynamicResource StorageTextBrush}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Expander">
+                        <StackPanel>
+                            <ToggleButton x:Name="HeaderButton"
+                                          Height="46"
+                                          Padding="14,0"
+                                          HorizontalContentAlignment="Stretch"
+                                          Content="{TemplateBinding Header}"
+                                          ContentTemplate="{TemplateBinding HeaderTemplate}"
+                                          ContentTemplateSelector="{TemplateBinding HeaderTemplateSelector}"
+                                          IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                                          Background="Transparent"
+                                          BorderThickness="0">
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Border x:Name="HeaderBorder"
+                                                Padding="{TemplateBinding Padding}"
+                                                Background="{TemplateBinding Background}"
+                                                CornerRadius="12">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="20" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+                                                <materialDesign:PackIcon x:Name="Arrow"
+                                                                         Width="18"
+                                                                         Height="18"
+                                                                         VerticalAlignment="Center"
+                                                                         Foreground="{DynamicResource StorageMutedTextBrush}"
+                                                                         Kind="ChevronRight" />
+                                                <ContentPresenter Grid.Column="1"
+                                                                  Margin="10,0,0,0"
+                                                                  VerticalAlignment="Center"
+                                                                  Content="{TemplateBinding Content}"
+                                                                  ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                                  TextElement.FontSize="12"
+                                                                  TextElement.Foreground="{DynamicResource StorageTextBrush}" />
+                                            </Grid>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="HeaderBorder" Property="Background" Value="{DynamicResource StorageSurfaceMutedBrush}" />
+                                            </Trigger>
+                                            <Trigger Property="IsChecked" Value="True">
+                                                <Setter TargetName="HeaderBorder" Property="Background" Value="{DynamicResource StorageInfoSurfaceBrush}" />
+                                                <Setter TargetName="Arrow" Property="Kind" Value="ChevronDown" />
+                                                <Setter TargetName="Arrow" Property="Foreground" Value="{DynamicResource StorageBrandMidBrush}" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+                            </ToggleButton>
+
+                            <Border x:Name="ContentBorder"
+                                    Margin="0,4,0,6"
+                                    Padding="10"
+                                    Background="{DynamicResource StorageSurfaceMutedBrush}"
+                                    CornerRadius="12"
+                                    Visibility="Collapsed">
+                                <ContentPresenter ContentSource="Content" />
+                            </Border>
+                        </StackPanel>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsExpanded" Value="True">
+                                <Setter TargetName="ContentBorder" Property="Visibility" Value="Visible" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="DataGridRow">
+            <Setter Property="Foreground" Value="{DynamicResource StorageTextBrush}" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource StorageInfoSurfaceBrush}" />
+                    <Setter Property="Foreground" Value="{DynamicResource StorageTextBrush}" />
+                </Trigger>
+                <MultiTrigger>
+                    <MultiTrigger.Conditions>
+                        <Condition Property="IsSelected" Value="True" />
+                        <Condition Property="IsMouseOver" Value="True" />
+                    </MultiTrigger.Conditions>
+                    <Setter Property="Background" Value="{DynamicResource StorageInfoSurfaceBrush}" />
+                </MultiTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="DetailLabelStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="Foreground" Value="{DynamicResource StorageMutedTextBrush}" />
+        </Style>
+
+        <Style x:Key="DetailValueStyle" TargetType="TextBlock">
+            <Setter Property="Margin" Value="0,4,0,0" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{DynamicResource StorageTextBrush}" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+    </mah:MetroWindow.Resources>
+
+    <Grid Background="{DynamicResource StorageShellBrush}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="218" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <Border Grid.Column="0"
+                Background="{DynamicResource StorageSurfaceBrush}"
+                BorderBrush="{DynamicResource StorageOutlineBrush}"
+                BorderThickness="0,0,1,0">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="86" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <Grid Margin="20,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="44" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Border Width="40"
+                            Height="40"
+                            VerticalAlignment="Center"
+                            Background="{DynamicResource StorageBrandMidBrush}"
+                            CornerRadius="12">
+                        <materialDesign:PackIcon Width="22"
+                                                 Height="22"
+                                                 HorizontalAlignment="Center"
+                                                 VerticalAlignment="Center"
+                                                 Foreground="White"
+                                                 Kind="Warehouse" />
+                    </Border>
+                    <StackPanel Grid.Column="1" Margin="10,0,0,0" VerticalAlignment="Center">
+                        <TextBlock Text="Склад"
+                                   FontSize="17"
+                                   FontWeight="SemiBold"
+                                   Foreground="{DynamicResource StorageTextBrush}" />
+                        <TextBlock Margin="0,2,0,0"
+                                   Text="Управление хранением"
+                                   FontSize="10"
+                                   Foreground="{DynamicResource StorageMutedTextBrush}" />
+                    </StackPanel>
+                </Grid>
+
+                <ScrollViewer Grid.Row="1"
+                              Margin="0,12,0,0"
+                              VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Disabled">
+                <StackPanel>
+                    <TextBlock Margin="24,0,0,8"
+                               Text="РАЗДЕЛЫ"
+                               FontSize="9"
+                               FontWeight="Bold"
+                               Foreground="{DynamicResource StorageMutedTextBrush}" />
+
+                    <Button Style="{StaticResource ActiveSidebarItemStyle}">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Width="20" Height="20" Kind="PackageVariantClosed" />
+                            <TextBlock Margin="12,0,0,0" VerticalAlignment="Center" Text="Контейнеры" FontWeight="SemiBold" />
+                        </StackPanel>
+                    </Button>
+
+                    <Button Style="{StaticResource SidebarItemStyle}">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Width="20" Height="20" Kind="BasketOutline" />
+                            <TextBlock Margin="12,0,0,0" VerticalAlignment="Center" Text="Корзины" />
+                        </StackPanel>
+                    </Button>
+
+                    <Button Style="{StaticResource SidebarItemStyle}">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Width="20" Height="20" Kind="Tools" />
+                            <TextBlock Margin="12,0,0,0" VerticalAlignment="Center" Text="Конструктор" />
+                        </StackPanel>
+                    </Button>
+
+                    <Button Style="{StaticResource SidebarItemStyle}">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Width="20" Height="20" Kind="ShieldAccountOutline" />
+                            <TextBlock Margin="12,0,0,0" VerticalAlignment="Center" Text="Администрирование" />
+                        </StackPanel>
+                    </Button>
+
+                    <Separator Margin="22,16" Background="{DynamicResource StorageOutlineBrush}" />
+
+                    <TextBlock Margin="24,0,0,8"
+                               Text="ФИЛЬТРЫ"
+                               FontSize="9"
+                               FontWeight="Bold"
+                               Foreground="{DynamicResource StorageMutedTextBrush}" />
+
+                    <Expander Header="Поиск по элементу"
+                              Style="{StaticResource SidebarFilterExpanderStyle}">
+                        <TextBox Margin="0,8,0,10"
+                                 Text="{Binding ElementFilter, UpdateSourceTrigger=PropertyChanged}"
+                                 Style="{StaticResource FilterTextBoxStyle}" />
+                    </Expander>
+
+                    <Expander Header="Поиск по имени ячейки"
+                              Style="{StaticResource SidebarFilterExpanderStyle}">
+                        <TextBox Margin="0,8,0,10"
+                                 Text="{Binding CellFilter, UpdateSourceTrigger=PropertyChanged}"
+                                 Style="{StaticResource FilterTextBoxStyle}" />
+                    </Expander>
+
+                    <Expander Header="Поиск по номеру контейнера"
+                              Style="{StaticResource SidebarFilterExpanderStyle}">
+                        <TextBox Margin="0,8,0,10"
+                                 Text="{Binding ContainerNumberFilter, UpdateSourceTrigger=PropertyChanged}"
+                                 Style="{StaticResource FilterTextBoxStyle}" />
+                    </Expander>
+
+                    <Expander Header="Поиск по артикулу"
+                              Style="{StaticResource SidebarFilterExpanderStyle}">
+                        <TextBox Margin="0,8,0,10"
+                                 Text="{Binding ArticleFilter, UpdateSourceTrigger=PropertyChanged}"
+                                 Style="{StaticResource FilterTextBoxStyle}" />
+                    </Expander>
+
+                    <Expander Header="Поиск по описанию"
+                              Style="{StaticResource SidebarFilterExpanderStyle}">
+                        <TextBox Margin="0,8,0,10"
+                                 Text="{Binding DescriptionFilter, UpdateSourceTrigger=PropertyChanged}"
+                                 Style="{StaticResource FilterTextBoxStyle}" />
+                    </Expander>
+
+                    <Expander Header="Поиск по документу"
+                              Style="{StaticResource SidebarFilterExpanderStyle}">
+                        <StackPanel Margin="0,8,0,10">
+                            <ComboBox Height="36"
+                                      Padding="8,0"
+                                      ItemsSource="{Binding DocumentTypes}"
+                                      SelectedItem="{Binding SelectedDocumentType}"
+                                      DisplayMemberPath="Name" />
+                            <TextBox Margin="0,7,0,0"
+                                     Text="{Binding DocumentNameFilter, UpdateSourceTrigger=PropertyChanged}"
+                                     IsEnabled="{Binding HasSelectedDocumentType}"
+                                     Style="{StaticResource FilterTextBoxStyle}" />
+                            <ListBox Margin="0,7,0,0"
+                                     MaxHeight="112"
+                                     ItemsSource="{Binding Documents}"
+                                     SelectedItem="{Binding SelectedDocument}"
+                                     DisplayMemberPath="Name"
+                                     BorderBrush="{DynamicResource StorageOutlineBrush}"
+                                     BorderThickness="1"
+                                     Visibility="{Binding HasSelectedDocumentType, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                        </StackPanel>
+                    </Expander>
+
+                    <Button Margin="12,12,12,0"
+                            Height="38"
+                            Content="Очистить фильтры"
+                            Command="{Binding ClearFiltersCommand}"
+                            Style="{StaticResource StorageSecondaryButtonStyle}" />
+
+                    <Separator Margin="22,16" Background="{DynamicResource StorageOutlineBrush}" />
+
+                    <TextBlock Margin="24,0,0,8"
+                               Text="ДЕЙСТВИЯ"
+                               FontSize="9"
+                               FontWeight="Bold"
+                               Foreground="{DynamicResource StorageMutedTextBrush}" />
+
+                    <Button Style="{StaticResource SidebarItemStyle}">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Width="20" Height="20" Kind="PlusBoxOutline" />
+                            <TextBlock Margin="12,0,0,0" VerticalAlignment="Center" Text="Добавить контейнер" />
+                        </StackPanel>
+                    </Button>
+
+                    <Button Style="{StaticResource SidebarItemStyle}">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Width="20" Height="20" Kind="ShapeOutline" />
+                            <TextBlock Margin="12,0,0,0" VerticalAlignment="Center" Text="Добавить элемент" />
+                        </StackPanel>
+                    </Button>
+
+                    <Button Style="{StaticResource SidebarItemStyle}">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Width="20" Height="20" Kind="MicrosoftExcel" />
+                            <TextBlock Margin="12,0,0,0" VerticalAlignment="Center" Text="Экспорт в Excel" />
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+                </ScrollViewer>
+
+                <Border Grid.Row="2"
+                        Margin="12,8,12,14"
+                        Padding="12"
+                        Background="{DynamicResource StorageSurfaceMutedBrush}"
+                        CornerRadius="12">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="36" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Border Width="34"
+                                Height="34"
+                                Background="{DynamicResource StorageInfoSurfaceBrush}"
+                                CornerRadius="17">
+                            <materialDesign:PackIcon Width="18"
+                                                     Height="18"
+                                                     HorizontalAlignment="Center"
+                                                     VerticalAlignment="Center"
+                                                     Foreground="{DynamicResource StorageInfoBrush}"
+                                                     Kind="AccountOutline" />
+                        </Border>
+                        <StackPanel Grid.Column="1" Margin="9,0,0,0" VerticalAlignment="Center">
+                            <TextBlock Text="{Binding Username}"
+                                       TextTrimming="CharacterEllipsis"
+                                       FontSize="12"
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource StorageTextBrush}" />
+                            <TextBlock Margin="0,2,0,0"
+                                       Text="{Binding Permission}"
+                                       TextTrimming="CharacterEllipsis"
+                                       FontSize="10"
+                                       Foreground="{DynamicResource StorageMutedTextBrush}" />
+                        </StackPanel>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Border>
+
+        <Grid Grid.Column="1" Margin="24,20,24,24">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <TextBlock Text="Контейнеры"
+                               FontSize="25"
+                               FontWeight="SemiBold"
+                               Foreground="{DynamicResource StorageTextBrush}" />
+                    <TextBlock Margin="0,4,0,0"
+                               Text="Основной реестр склада"
+                               FontSize="12"
+                               Foreground="{DynamicResource StorageMutedTextBrush}" />
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button Command="{Binding RefreshCommand}"
+                            Style="{StaticResource CompactIconButtonStyle}"
+                            ToolTip="Обновить контейнеры">
+                        <materialDesign:PackIcon Width="19" Height="19" Kind="Refresh" />
+                    </Button>
+                    <Button Margin="6,0,0,0"
+                            Command="{Binding ToggleThemeCommand}"
+                            Style="{StaticResource CompactIconButtonStyle}"
+                            ToolTip="Переключить тему">
+                        <materialDesign:PackIcon Width="19" Height="19" Kind="ThemeLightDark" />
+                    </Button>
+                </StackPanel>
+            </Grid>
+
+            <Border Grid.Row="1"
+                    Margin="0,14,0,0"
+                    Padding="12,9"
+                    Background="{DynamicResource StorageDangerSurfaceBrush}"
+                    CornerRadius="10"
+                    Visibility="{Binding HasError, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <materialDesign:PackIcon Width="18"
+                                             Height="18"
+                                             VerticalAlignment="Top"
+                                             Foreground="{DynamicResource StorageDangerBrush}"
+                                             Kind="AlertCircleOutline" />
+                    <TextBlock Grid.Column="1"
+                               Margin="9,0,0,0"
+                               Text="{Binding ErrorMessage}"
+                               TextWrapping="Wrap"
+                               FontSize="11"
+                               Foreground="{DynamicResource StorageDangerBrush}" />
+                </Grid>
+            </Border>
+
+            <Grid Grid.Row="2" Margin="0,16,0,14">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Column="0" Style="{StaticResource StatCardStyle}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="38" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Border Width="34" Height="34" Background="{DynamicResource StorageInfoSurfaceBrush}" CornerRadius="10">
+                            <materialDesign:PackIcon Width="18" Height="18" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{DynamicResource StorageInfoBrush}" Kind="PackageVariantClosed" />
+                        </Border>
+                        <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                            <TextBlock Text="{Binding TotalCount}" FontSize="19" FontWeight="SemiBold" Foreground="{DynamicResource StorageTextBrush}" />
+                            <TextBlock Text="Всего" FontSize="10" Foreground="{DynamicResource StorageMutedTextBrush}" />
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <Border Grid.Column="1" Style="{StaticResource StatCardStyle}">
+                    <Grid>
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="38" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                        <Border Width="34" Height="34" Background="{DynamicResource StorageSuccessSurfaceBrush}" CornerRadius="10">
+                            <materialDesign:PackIcon Width="18" Height="18" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{DynamicResource StorageSuccessBrush}" Kind="CheckCircleOutline" />
+                        </Border>
+                        <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                            <TextBlock Text="{Binding AvailableCount}" FontSize="19" FontWeight="SemiBold" Foreground="{DynamicResource StorageTextBrush}" />
+                            <TextBlock Text="Доступно" FontSize="10" Foreground="{DynamicResource StorageMutedTextBrush}" />
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <Border Grid.Column="2" Style="{StaticResource StatCardStyle}">
+                    <Grid>
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="38" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                        <Border Width="34" Height="34" Background="{DynamicResource StorageWarningSurfaceBrush}" CornerRadius="10">
+                            <materialDesign:PackIcon Width="18" Height="18" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{DynamicResource StorageWarningBrush}" Kind="LockOutline" />
+                        </Border>
+                        <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                            <TextBlock Text="{Binding ReservedCount}" FontSize="19" FontWeight="SemiBold" Foreground="{DynamicResource StorageTextBrush}" />
+                            <TextBlock Text="В резерве" FontSize="10" Foreground="{DynamicResource StorageMutedTextBrush}" />
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <Border Grid.Column="3" Margin="0" Style="{StaticResource StatCardStyle}">
+                    <Grid>
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="38" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                        <Border Width="34" Height="34" Background="{DynamicResource StorageDangerSurfaceBrush}" CornerRadius="10">
+                            <materialDesign:PackIcon Width="18" Height="18" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{DynamicResource StorageDangerBrush}" Kind="AlertOutline" />
+                        </Border>
+                        <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                            <TextBlock Text="{Binding DefectedCount}" FontSize="19" FontWeight="SemiBold" Foreground="{DynamicResource StorageTextBrush}" />
+                            <TextBlock Text="Брак" FontSize="10" Foreground="{DynamicResource StorageMutedTextBrush}" />
+                        </StackPanel>
+                    </Grid>
+                </Border>
+            </Grid>
+
+            <Grid Grid.Row="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" MinWidth="570" />
+                    <ColumnDefinition Width="14" />
+                    <ColumnDefinition Width="320" />
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Column="0" Style="{StaticResource StorageCardStyle}" CornerRadius="16">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="52" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="36" />
+                        </Grid.RowDefinitions>
+
+                        <Grid Margin="16,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock VerticalAlignment="Center"
+                                       Text="Отображение"
+                                       FontSize="11"
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource StorageMutedTextBrush}" />
+                            <StackPanel Grid.Column="1"
+                                        Orientation="Horizontal"
+                                        VerticalAlignment="Center">
+                                <CheckBox Margin="0,0,18,0"
+                                          Content="Показывать резерв"
+                                          IsChecked="{Binding ShowReservedOnly}" />
+                                <CheckBox Content="Показывать брак"
+                                          IsChecked="{Binding ShowDefectedOnly}" />
+                            </StackPanel>
+                        </Grid>
+
+                        <DataGrid Grid.Row="1"
+                                  ItemsSource="{Binding ContainersView}"
+                                  SelectedItem="{Binding SelectedContainer}"
+                                  Style="{StaticResource StorageDataGridStyle}">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Width="78" Header="№" Binding="{Binding DisplayName}" ElementStyle="{StaticResource DataGridTextStyle}" />
+                                <DataGridTextColumn Width="95" Header="Ячейка" Binding="{Binding CellName, TargetNullValue=—}" ElementStyle="{StaticResource DataGridTextStyle}" />
+                                <DataGridTextColumn Width="140" Header="Расположение" Binding="{Binding CellAddressName, TargetNullValue=—}" ElementStyle="{StaticResource DataGridTextStyle}" />
+                                <DataGridTextColumn Width="*" MinWidth="220" Header="Элемент" Binding="{Binding ElementName, TargetNullValue=—}" ElementStyle="{StaticResource DataGridTextStyle}" />
+                                <DataGridTextColumn Width="125" Header="Тип" Binding="{Binding ElementType, TargetNullValue=—}" ElementStyle="{StaticResource DataGridTextStyle}" />
+                                <DataGridTextColumn Width="82" Header="Кол-во" Binding="{Binding Count}" ElementStyle="{StaticResource DataGridTextStyle}" />
+                                <DataGridTextColumn Width="100" Header="Цена" Binding="{Binding Price, TargetNullValue=—}" ElementStyle="{StaticResource DataGridTextStyle}" />
+                                <DataGridTemplateColumn Width="105" Header="Статус">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Border Margin="12,0,0,0"
+                                                    Padding="9,5"
+                                                    HorizontalAlignment="Left"
+                                                    VerticalAlignment="Center"
+                                                    CornerRadius="9">
+                                                <Border.Style>
+                                                    <Style TargetType="Border">
+                                                        <Setter Property="Background" Value="{DynamicResource StorageSuccessSurfaceBrush}" />
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsReserved}" Value="1">
+                                                                <Setter Property="Background" Value="{DynamicResource StorageWarningSurfaceBrush}" />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding IsDefected}" Value="1">
+                                                                <Setter Property="Background" Value="{DynamicResource StorageDangerSurfaceBrush}" />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding IsActive}" Value="0">
+                                                                <Setter Property="Background" Value="{DynamicResource StorageSurfaceMutedBrush}" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Border.Style>
+                                                <TextBlock Text="{Binding StatusText}" FontSize="10" FontWeight="SemiBold">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Setter Property="Foreground" Value="{DynamicResource StorageSuccessBrush}" />
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsReserved}" Value="1">
+                                                                    <Setter Property="Foreground" Value="{DynamicResource StorageWarningBrush}" />
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding IsDefected}" Value="1">
+                                                                    <Setter Property="Foreground" Value="{DynamicResource StorageDangerBrush}" />
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding IsActive}" Value="0">
+                                                                    <Setter Property="Foreground" Value="{DynamicResource StorageMutedTextBrush}" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                            </Border>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <DataGridTextColumn Width="120" Header="Добавлен" Binding="{Binding DateAdded, StringFormat={}{0:dd.MM.yyyy}, TargetNullValue=—}" ElementStyle="{StaticResource DataGridTextStyle}" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+
+                        <Grid Grid.Row="2" Margin="14,0">
+                            <TextBlock VerticalAlignment="Center"
+                                       Text="{Binding ContainersView.Count, StringFormat=Показано: {0}}"
+                                       FontSize="10"
+                                       Foreground="{DynamicResource StorageMutedTextBrush}" />
+                            <ProgressBar Width="120"
+                                         Height="3"
+                                         HorizontalAlignment="Right"
+                                         VerticalAlignment="Center"
+                                         IsIndeterminate="True"
+                                         Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                        </Grid>
+                    </Grid>
+                </Border>
+
+                <Border Grid.Column="2" Style="{StaticResource StorageCardStyle}" CornerRadius="16">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <StackPanel Margin="20">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Text="Карточка контейнера"
+                                               FontSize="15"
+                                               FontWeight="SemiBold"
+                                               Foreground="{DynamicResource StorageTextBrush}" />
+                                    <TextBlock Margin="0,4,0,0"
+                                               Text="Данные выбранной строки"
+                                               FontSize="10"
+                                               Foreground="{DynamicResource StorageMutedTextBrush}" />
+                                </StackPanel>
+                                <materialDesign:PackIcon Grid.Column="1"
+                                                         Width="22"
+                                                         Height="22"
+                                                         Foreground="{DynamicResource StorageBrandMidBrush}"
+                                                         Kind="PackageVariantClosed" />
+                            </Grid>
+
+                            <Border Margin="0,18,0,0"
+                                    Padding="14"
+                                    Background="{DynamicResource StorageSurfaceMutedBrush}"
+                                    CornerRadius="12">
+                                <StackPanel>
+                                    <TextBlock Text="{Binding SelectedContainer.ElementName, TargetNullValue=Контейнер не выбран}"
+                                               FontSize="16"
+                                               FontWeight="SemiBold"
+                                               TextWrapping="Wrap"
+                                               Foreground="{DynamicResource StorageTextBrush}" />
+                                    <TextBlock Margin="0,6,0,0"
+                                               Text="{Binding SelectedContainer.Name, StringFormat=Контейнер № {0}, TargetNullValue=Выберите строку в таблице}"
+                                               FontSize="11"
+                                               Foreground="{DynamicResource StorageMutedTextBrush}" />
+                                </StackPanel>
+                            </Border>
+
+                            <TextBlock Margin="0,20,0,12"
+                                       Text="РАЗМЕЩЕНИЕ"
+                                       FontSize="9"
+                                       FontWeight="Bold"
+                                       Foreground="{DynamicResource StorageMutedTextBrush}" />
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Margin="0,0,8,0">
+                                    <TextBlock Text="Ячейка" Style="{StaticResource DetailLabelStyle}" />
+                                    <TextBlock Text="{Binding SelectedContainer.CellName, TargetNullValue=—}" Style="{StaticResource DetailValueStyle}" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Margin="8,0,0,0">
+                                    <TextBlock Text="Адрес" Style="{StaticResource DetailLabelStyle}" />
+                                    <TextBlock Text="{Binding SelectedContainer.CellAddressName, TargetNullValue=—}" Style="{StaticResource DetailValueStyle}" />
+                                </StackPanel>
+                            </Grid>
+
+                            <Separator Margin="0,18" Background="{DynamicResource StorageOutlineBrush}" />
+
+                            <TextBlock Text="ПАРАМЕТРЫ"
+                                       FontSize="9"
+                                       FontWeight="Bold"
+                                       Foreground="{DynamicResource StorageMutedTextBrush}" />
+
+                            <Grid Margin="0,12,0,0">
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                                <StackPanel Margin="0,0,8,0">
+                                    <TextBlock Text="Артикул" Style="{StaticResource DetailLabelStyle}" />
+                                    <TextBlock Text="{Binding SelectedContainer.Article, TargetNullValue=—}" Style="{StaticResource DetailValueStyle}" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Margin="8,0,0,0">
+                                    <TextBlock Text="Количество" Style="{StaticResource DetailLabelStyle}" />
+                                    <TextBlock Text="{Binding SelectedContainer.Count, TargetNullValue=—}" Style="{StaticResource DetailValueStyle}" />
+                                </StackPanel>
+                            </Grid>
+
+                            <Grid Margin="0,16,0,0">
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                                <StackPanel Margin="0,0,8,0">
+                                    <TextBlock Text="Тип элемента" Style="{StaticResource DetailLabelStyle}" />
+                                    <TextBlock Text="{Binding SelectedContainer.ElementType, TargetNullValue=—}" Style="{StaticResource DetailValueStyle}" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Margin="8,0,0,0">
+                                    <TextBlock Text="Подтип" Style="{StaticResource DetailLabelStyle}" />
+                                    <TextBlock Text="{Binding SelectedContainer.ElementSubtype, TargetNullValue=—}" Style="{StaticResource DetailValueStyle}" />
+                                </StackPanel>
+                            </Grid>
+
+                            <Grid Margin="0,16,0,0">
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                                <StackPanel Margin="0,0,8,0">
+                                    <TextBlock Text="Упаковка" Style="{StaticResource DetailLabelStyle}" />
+                                    <TextBlock Text="{Binding SelectedContainer.PackageTypeName, TargetNullValue=—}" Style="{StaticResource DetailValueStyle}" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Margin="8,0,0,0">
+                                    <TextBlock Text="Цена" Style="{StaticResource DetailLabelStyle}" />
+                                    <TextBlock Text="{Binding SelectedContainer.Price, TargetNullValue=—}" Style="{StaticResource DetailValueStyle}" />
+                                </StackPanel>
+                            </Grid>
+
+                            <Separator Margin="0,18" Background="{DynamicResource StorageOutlineBrush}" />
+
+                            <TextBlock Text="Описание" Style="{StaticResource DetailLabelStyle}" />
+                            <TextBlock Margin="0,7,0,0"
+                                       MinHeight="42"
+                                       Text="{Binding SelectedContainer.Description, TargetNullValue=Описание отсутствует}"
+                                       TextWrapping="Wrap"
+                                       FontSize="12"
+                                       LineHeight="18"
+                                       Foreground="{DynamicResource StorageTextBrush}" />
+
+                            <Border Margin="0,20,0,0"
+                                    Padding="12,10"
+                                    Background="{DynamicResource StorageInfoSurfaceBrush}"
+                                    CornerRadius="10">
+                                <Grid>
+                                    <Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                                    <materialDesign:PackIcon Width="17" Height="17" Foreground="{DynamicResource StorageInfoBrush}" Kind="ClockOutline" />
+                                    <StackPanel Grid.Column="1" Margin="9,0,0,0">
+                                        <TextBlock Text="Добавлен на склад" FontSize="10" Foreground="{DynamicResource StorageInfoBrush}" />
+                                        <TextBlock Margin="0,3,0,0"
+                                                   Text="{Binding SelectedContainer.DateAdded, StringFormat={}{0:dd.MM.yyyy HH:mm}, TargetNullValue=—}"
+                                                   FontSize="11"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="{DynamicResource StorageTextBrush}" />
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Border>
+            </Grid>
+        </Grid>
+    </Grid>
+</mah:MetroWindow>

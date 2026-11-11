@@ -10,10 +10,18 @@ namespace StorageClient.Redesign.ViewModels;
 
 public sealed class MainViewModel : ViewModelBase
 {
+    private const string ContainerLoadKey = "main-containers";
+    private const string DocumentSearchKey = "main-documents";
+    private const string ContainerLoadOperation = "Загрузка контейнеров";
+
     private readonly IContainerService _containerService;
     private readonly IAuthStateService _authState;
     private readonly IThemeService _themeService;
-    private readonly AsyncRelayCommand _refreshCommand;
+    private readonly ITaskExecutionService _taskExecutionService;
+    private readonly ICommandFactory _commandFactory;
+    private AsyncRelayCommand? _refreshCommand;
+    private RelayCommand? _clearFiltersCommand;
+    private RelayCommand? _toggleThemeCommand;
 
     private ContainerWithDetailDto? _selectedContainer;
     private string _containerNumberFilter = string.Empty;
@@ -28,23 +36,23 @@ public sealed class MainViewModel : ViewModelBase
     private string _errorMessage = string.Empty;
     private DocumentTypeDto? _selectedDocumentType;
     private DocumentDto? _selectedDocument;
-    private CancellationTokenSource? _documentSearchCancellation;
+    private bool _clearingFilters;
 
     public MainViewModel(
         IContainerService containerService,
         IAuthStateService authState,
-        IThemeService themeService)
+        IThemeService themeService,
+        ITaskExecutionService taskExecutionService,
+        ICommandFactory commandFactory)
     {
         _containerService = containerService;
         _authState = authState;
         _themeService = themeService;
+        _taskExecutionService = taskExecutionService;
+        _commandFactory = commandFactory;
 
         ContainersView = CollectionViewSource.GetDefaultView(Containers);
         ContainersView.Filter = MatchesFilters;
-
-        _refreshCommand = new AsyncRelayCommand(LoadAsync, () => !IsLoading);
-        ClearFiltersCommand = new RelayCommand(ClearFilters, HasFilters);
-        ToggleThemeCommand = new RelayCommand(ToggleTheme);
     }
 
     public ObservableCollection<ContainerWithDetailDto> Containers { get; } = [];
@@ -52,9 +60,14 @@ public sealed class MainViewModel : ViewModelBase
     public ObservableCollection<DocumentDto> Documents { get; } = [];
     public ICollectionView ContainersView { get; }
 
-    public ICommand RefreshCommand => _refreshCommand;
-    public ICommand ClearFiltersCommand { get; }
-    public ICommand ToggleThemeCommand { get; }
+    public ICommand RefreshCommand => _refreshCommand ??=
+        _commandFactory.CreateCommand(LoadAsync, ContainerLoadOperation, ShowError, () => !IsLoading);
+
+    public ICommand ClearFiltersCommand => _clearFiltersCommand ??=
+        _commandFactory.CreateCommand(ClearFilters, HasFilters);
+
+    public ICommand ToggleThemeCommand => _toggleThemeCommand ??=
+        _commandFactory.CreateCommand(ToggleTheme);
 
     public string Username => _authState.Username ?? "Пользователь";
     public string Permission => _authState.Permission;
@@ -69,108 +82,49 @@ public sealed class MainViewModel : ViewModelBase
     public string ContainerNumberFilter
     {
         get => _containerNumberFilter;
-        set
-        {
-            if (!Set(ref _containerNumberFilter, value))
-            {
-                return;
-            }
-
-            RefreshFilters();
-        }
+        set => Set(ref _containerNumberFilter, value);
     }
 
     public string ArticleFilter
     {
         get => _articleFilter;
-        set
-        {
-            if (Set(ref _articleFilter, value))
-            {
-                RefreshFilters();
-            }
-        }
+        set => Set(ref _articleFilter, value);
     }
 
     public string ElementFilter
     {
         get => _elementFilter;
-        set
-        {
-            if (Set(ref _elementFilter, value))
-            {
-                RefreshFilters();
-            }
-        }
+        set => Set(ref _elementFilter, value);
     }
 
     public string CellFilter
     {
         get => _cellFilter;
-        set
-        {
-            if (Set(ref _cellFilter, value))
-            {
-                RefreshFilters();
-            }
-        }
+        set => Set(ref _cellFilter, value);
     }
 
     public string DescriptionFilter
     {
         get => _descriptionFilter;
-        set
-        {
-            if (Set(ref _descriptionFilter, value))
-            {
-                RefreshFilters();
-            }
-        }
+        set => Set(ref _descriptionFilter, value);
     }
 
     public string DocumentNameFilter
     {
         get => _documentNameFilter;
-        set
-        {
-            if (Set(ref _documentNameFilter, value))
-            {
-                ScheduleDocumentLoad();
-                ((RelayCommand)ClearFiltersCommand).RaiseCanExecuteChanged();
-            }
-        }
+        set => Set(ref _documentNameFilter, value);
     }
 
     public DocumentTypeDto? SelectedDocumentType
     {
         get => _selectedDocumentType;
-        set
-        {
-            if (!Set(ref _selectedDocumentType, value))
-            {
-                return;
-            }
-
-            _selectedDocument = null;
-            OnPropertyChanged(nameof(SelectedDocument));
-            OnPropertyChanged(nameof(HasSelectedDocumentType));
-            Documents.Clear();
-            ScheduleDocumentLoad(immediate: true);
-            ((RelayCommand)ClearFiltersCommand).RaiseCanExecuteChanged();
-        }
+        set => Set(ref _selectedDocumentType, value);
     }
 
     public DocumentDto? SelectedDocument
     {
         get => _selectedDocument;
-        set
-        {
-            if (Set(ref _selectedDocument, value))
-            {
-                _ = LoadAsync();
-                ((RelayCommand)ClearFiltersCommand).RaiseCanExecuteChanged();
-            }
-        }
+        set => Set(ref _selectedDocument, value);
     }
 
     public bool HasSelectedDocumentType => SelectedDocumentType is not null;
@@ -178,49 +132,25 @@ public sealed class MainViewModel : ViewModelBase
     public bool ShowReservedOnly
     {
         get => _showReservedOnly;
-        set
-        {
-            if (Set(ref _showReservedOnly, value))
-            {
-                RefreshFilters();
-            }
-        }
+        set => Set(ref _showReservedOnly, value);
     }
 
     public bool ShowDefectedOnly
     {
         get => _showDefectedOnly;
-        set
-        {
-            if (Set(ref _showDefectedOnly, value))
-            {
-                RefreshFilters();
-            }
-        }
+        set => Set(ref _showDefectedOnly, value);
     }
 
     public bool IsLoading
     {
         get => _isLoading;
-        private set
-        {
-            if (Set(ref _isLoading, value))
-            {
-                _refreshCommand.RaiseCanExecuteChanged();
-            }
-        }
+        private set => Set(ref _isLoading, value);
     }
 
     public string ErrorMessage
     {
         get => _errorMessage;
-        private set
-        {
-            if (Set(ref _errorMessage, value))
-            {
-                OnPropertyChanged(nameof(HasError));
-            }
-        }
+        private set => Set(ref _errorMessage, value);
     }
 
     public bool HasError => !string.IsNullOrWhiteSpace(ErrorMessage);
@@ -229,25 +159,26 @@ public sealed class MainViewModel : ViewModelBase
     public int ReservedCount => Containers.Count(item => item.IsActive == 1 && item.IsReserved == 1);
     public int DefectedCount => Containers.Count(item => item.IsActive == 1 && item.IsDefected == 1);
 
-    public async Task LoadAsync()
-    {
-        if (IsLoading)
-        {
-            return;
-        }
+    public Task LoadAsync() => _taskExecutionService.ExecuteWithDebounceAsync(
+        ContainerLoadKey, LoadContainersAsync, 0, ContainerLoadOperation, ShowError);
 
+    private async Task LoadContainersAsync(CancellationToken cancellationToken)
+    {
         try
         {
             IsLoading = true;
             ErrorMessage = string.Empty;
 
             IReadOnlyList<ContainerWithDetailDto> loaded =
-                await _containerService.GetContainersAsync(SelectedDocument?.Id);
+                await _containerService.GetContainersAsync(SelectedDocument?.Id, cancellationToken);
+
+            cancellationToken.ThrowIfCancellationRequested();
 
             if (DocumentTypes.Count == 0)
             {
                 IReadOnlyList<DocumentTypeDto> documentTypes =
-                    await _containerService.GetDocumentTypesAsync();
+                    await _containerService.GetDocumentTypesAsync(cancellationToken);
+                cancellationToken.ThrowIfCancellationRequested();
                 foreach (DocumentTypeDto documentType in documentTypes)
                 {
                     DocumentTypes.Add(documentType);
@@ -263,12 +194,6 @@ public sealed class MainViewModel : ViewModelBase
             RefreshCounters();
             ContainersView.Refresh();
             SelectedContainer = ContainersView.Cast<ContainerWithDetailDto>().FirstOrDefault();
-        }
-        catch (Exception exception)
-        {
-            ErrorMessage = exception is HttpRequestException httpException
-                ? ApiErrorFormatter.Format(httpException)
-                : exception.Message;
         }
         finally
         {
@@ -349,27 +274,36 @@ public sealed class MainViewModel : ViewModelBase
 
     private void ClearFilters()
     {
-        ContainerNumberFilter = string.Empty;
-        ArticleFilter = string.Empty;
-        ElementFilter = string.Empty;
-        CellFilter = string.Empty;
-        DescriptionFilter = string.Empty;
-        DocumentNameFilter = string.Empty;
-        _selectedDocument = null;
-        OnPropertyChanged(nameof(SelectedDocument));
-        _selectedDocumentType = null;
-        OnPropertyChanged(nameof(SelectedDocumentType));
+        _taskExecutionService.CancelDebounce(DocumentSearchKey);
+        _clearingFilters = true;
+        try
+        {
+            ContainerNumberFilter = string.Empty;
+            ArticleFilter = string.Empty;
+            ElementFilter = string.Empty;
+            CellFilter = string.Empty;
+            DescriptionFilter = string.Empty;
+            DocumentNameFilter = string.Empty;
+            SelectedDocument = null;
+            SelectedDocumentType = null;
+            ShowReservedOnly = false;
+            ShowDefectedOnly = false;
+            Documents.Clear();
+        }
+        finally
+        {
+            _clearingFilters = false;
+        }
+
         OnPropertyChanged(nameof(HasSelectedDocumentType));
-        Documents.Clear();
-        ShowReservedOnly = false;
-        ShowDefectedOnly = false;
+        RefreshFilters();
         _ = LoadAsync();
     }
 
     private void RefreshFilters()
     {
         ContainersView.Refresh();
-        ((RelayCommand)ClearFiltersCommand).RaiseCanExecuteChanged();
+        _clearFiltersCommand?.RaiseCanExecuteChanged();
     }
 
     private void RefreshCounters()
@@ -386,48 +320,82 @@ public sealed class MainViewModel : ViewModelBase
         OnPropertyChanged(nameof(IsDarkTheme));
     }
 
-    private void ScheduleDocumentLoad(bool immediate = false)
+    private void ShowError(string message) => ErrorMessage = message;
+
+    private Task ScheduleDocumentLoad(int delayMs)
     {
-        _documentSearchCancellation?.Cancel();
-        _documentSearchCancellation?.Dispose();
-        _documentSearchCancellation = new CancellationTokenSource();
-        _ = LoadDocumentsAfterDelayAsync(immediate, _documentSearchCancellation.Token);
+        if (SelectedDocumentType is not { } documentType)
+        {
+            _taskExecutionService.CancelDebounce(DocumentSearchKey);
+            return Task.CompletedTask;
+        }
+
+        string nameFilter = DocumentNameFilter;
+        return _taskExecutionService.ExecuteWithDebounceAsync(
+            DocumentSearchKey,
+            token => LoadDocumentsAsync(documentType.Id, nameFilter, token),
+            delayMs, "Загрузка документов", ShowError);
     }
 
-    private async Task LoadDocumentsAfterDelayAsync(bool immediate, CancellationToken cancellationToken)
+    private async Task LoadDocumentsAsync(
+        int documentTypeId, string nameFilter, CancellationToken cancellationToken)
     {
-        try
+        IReadOnlyList<DocumentDto> documents = await _containerService.GetDocumentsAsync(
+            documentTypeId, nameFilter, cancellationToken);
+        cancellationToken.ThrowIfCancellationRequested();
+
+        Documents.Clear();
+        foreach (DocumentDto document in documents)
         {
-            if (!immediate)
-            {
-                await Task.Delay(250, cancellationToken);
-            }
-
-            DocumentTypeDto? documentType = SelectedDocumentType;
-            if (documentType is null)
-            {
-                return;
-            }
-
-            IReadOnlyList<DocumentDto> documents = await _containerService.GetDocumentsAsync(
-                documentType.Id,
-                DocumentNameFilter,
-                cancellationToken);
-
-            Documents.Clear();
-            foreach (DocumentDto document in documents)
-            {
-                Documents.Add(document);
-            }
+            Documents.Add(document);
         }
-        catch (OperationCanceledException)
+    }
+
+    private void OnSelectedDocumentTypeChanged()
+    {
+        OnPropertyChanged(nameof(HasSelectedDocumentType));
+        SelectedDocument = null;
+        Documents.Clear();
+        _ = ScheduleDocumentLoad(0);
+    }
+
+    protected override void OnPropertyChanged(string? propertyName)
+    {
+        base.OnPropertyChanged(propertyName);
+        if (_clearingFilters)
         {
+            return;
         }
-        catch (Exception exception)
+
+        switch (propertyName)
         {
-            ErrorMessage = exception is HttpRequestException httpException
-                ? ApiErrorFormatter.Format(httpException)
-                : exception.Message;
+            case nameof(ContainerNumberFilter):
+            case nameof(ArticleFilter):
+            case nameof(ElementFilter):
+            case nameof(CellFilter):
+            case nameof(DescriptionFilter):
+            case nameof(ShowReservedOnly):
+            case nameof(ShowDefectedOnly):
+                RefreshFilters();
+                break;
+            case nameof(DocumentNameFilter):
+                _ = ScheduleDocumentLoad(250);
+                _clearFiltersCommand?.RaiseCanExecuteChanged();
+                break;
+            case nameof(SelectedDocumentType):
+                OnSelectedDocumentTypeChanged();
+                _clearFiltersCommand?.RaiseCanExecuteChanged();
+                break;
+            case nameof(SelectedDocument):
+                _ = LoadAsync();
+                _clearFiltersCommand?.RaiseCanExecuteChanged();
+                break;
+            case nameof(IsLoading):
+                _refreshCommand?.RaiseCanExecuteChanged();
+                break;
+            case nameof(ErrorMessage):
+                OnPropertyChanged(nameof(HasError));
+                break;
         }
     }
 }

@@ -73,6 +73,8 @@ public partial class App : Application
         services.AddSingleton<IThemeService, ThemeService>();
         services.AddSingleton<IAuthenticationService, OidcAuthenticationService>();
         services.AddSingleton<IContainerService, ContainerService>();
+        services.AddSingleton<ITaskExecutionService, TaskExecutionService>();
+        services.AddSingleton<ICommandFactory, CommandFactory>();
         services.AddTransient<LoginViewModel>();
         services.AddTransient<LoginWindow>();
         services.AddTransient<MainViewModel>();

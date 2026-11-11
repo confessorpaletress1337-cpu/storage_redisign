@@ -67,6 +67,40 @@
             <Setter Property="CornerRadius" Value="14" />
         </Style>
 
+        <Style x:Key="StorageGridSplitterStyle" TargetType="GridSplitter">
+            <Setter Property="Width" Value="7" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="VerticalAlignment" Value="Stretch" />
+            <Setter Property="ResizeDirection" Value="Columns" />
+            <Setter Property="ResizeBehavior" Value="PreviousAndNext" />
+            <Setter Property="ShowsPreview" Value="False" />
+            <Setter Property="Focusable" Value="False" />
+            <Setter Property="Cursor" Value="SizeWE" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="GridSplitter">
+                        <Grid Background="Transparent">
+                            <Border x:Name="Grip"
+                                    Width="1"
+                                    HorizontalAlignment="Center"
+                                    Background="{DynamicResource StorageOutlineBrush}" />
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Grip" Property="Width" Value="3" />
+                                <Setter TargetName="Grip" Property="Background" Value="{DynamicResource StorageBrandMidBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsDragging" Value="True">
+                                <Setter TargetName="Grip" Property="Width" Value="3" />
+                                <Setter TargetName="Grip" Property="Background" Value="{DynamicResource StorageBrandMidBrush}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <Style x:Key="StorageDataGridStyle" TargetType="DataGrid">
             <Setter Property="Background" Value="{DynamicResource StorageSurfaceBrush}" />
             <Setter Property="Foreground" Value="{DynamicResource StorageTextBrush}" />
@@ -260,7 +294,8 @@
 
     <Grid Background="{DynamicResource StorageShellBrush}">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="218" />
+            <ColumnDefinition Width="218" MinWidth="200" MaxWidth="360" />
+            <ColumnDefinition Width="7" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
@@ -484,7 +519,11 @@
             </Grid>
         </Border>
 
-        <Grid Grid.Column="1" Margin="24,20,24,24">
+        <GridSplitter Grid.Column="1"
+                      Panel.ZIndex="2"
+                      Style="{StaticResource StorageGridSplitterStyle}" />
+
+        <Grid Grid.Column="2" Margin="24,20,24,24">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -615,8 +654,8 @@
             <Grid Grid.Row="3">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" MinWidth="570" />
-                    <ColumnDefinition Width="14" />
-                    <ColumnDefinition Width="320" />
+                    <ColumnDefinition Width="7" />
+                    <ColumnDefinition Width="320" MinWidth="280" MaxWidth="520" />
                 </Grid.ColumnDefinitions>
 
                 <Border Grid.Column="0" Style="{StaticResource StorageCardStyle}" CornerRadius="16">
@@ -724,6 +763,10 @@
                         </Grid>
                     </Grid>
                 </Border>
+
+                <GridSplitter Grid.Column="1"
+                              Panel.ZIndex="2"
+                              Style="{StaticResource StorageGridSplitterStyle}" />
 
                 <Border Grid.Column="2" Style="{StaticResource StorageCardStyle}" CornerRadius="16">
                     <ScrollViewer VerticalScrollBarVisibility="Auto">

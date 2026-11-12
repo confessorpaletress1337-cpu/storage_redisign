@@ -191,44 +191,49 @@
                     <ControlTemplate TargetType="Expander">
                         <StackPanel>
                             <ToggleButton x:Name="HeaderButton"
-                                          Height="46"
-                                          Padding="14,0"
-                                          HorizontalContentAlignment="Stretch"
-                                          Content="{TemplateBinding Header}"
-                                          ContentTemplate="{TemplateBinding HeaderTemplate}"
-                                          ContentTemplateSelector="{TemplateBinding HeaderTemplateSelector}"
+                                          Style="{x:Null}"
+                                          OverridesDefaultStyle="True"
+                                          MinHeight="46"
+                                          Padding="14,8"
+                                          HorizontalAlignment="Stretch"
+                                          AutomationProperties.Name="{TemplateBinding Header}"
                                           IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
-                                          Background="Transparent"
-                                          BorderThickness="0">
+                                          Background="{DynamicResource StorageSurfaceMutedBrush}">
                                 <ToggleButton.Template>
                                     <ControlTemplate TargetType="ToggleButton">
                                         <Border x:Name="HeaderBorder"
                                                 Padding="{TemplateBinding Padding}"
                                                 Background="{TemplateBinding Background}"
+                                                BorderBrush="{DynamicResource StorageOutlineBrush}"
+                                                BorderThickness="1"
                                                 CornerRadius="12">
                                             <Grid>
                                                 <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="20" />
                                                     <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
                                                 </Grid.ColumnDefinitions>
+                                                <TextBlock x:Name="FilterHeaderText"
+                                                           Margin="0,0,8,0"
+                                                           VerticalAlignment="Center"
+                                                           Text="{Binding Header, RelativeSource={RelativeSource AncestorType=Expander}}"
+                                                           TextWrapping="Wrap"
+                                                           FontSize="12"
+                                                           Foreground="{DynamicResource StorageTextBrush}" />
                                                 <materialDesign:PackIcon x:Name="Arrow"
+                                                                         Grid.Column="1"
                                                                          Width="18"
                                                                          Height="18"
                                                                          VerticalAlignment="Center"
                                                                          Foreground="{DynamicResource StorageMutedTextBrush}"
                                                                          Kind="ChevronRight" />
-                                                <ContentPresenter Grid.Column="1"
-                                                                  Margin="10,0,0,0"
-                                                                  VerticalAlignment="Center"
-                                                                  Content="{TemplateBinding Content}"
-                                                                  ContentTemplate="{TemplateBinding ContentTemplate}"
-                                                                  TextElement.FontSize="12"
-                                                                  TextElement.Foreground="{DynamicResource StorageTextBrush}" />
                                             </Grid>
                                         </Border>
                                         <ControlTemplate.Triggers>
                                             <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter TargetName="HeaderBorder" Property="Background" Value="{DynamicResource StorageSurfaceMutedBrush}" />
+                                                <Setter TargetName="HeaderBorder" Property="Background" Value="{DynamicResource StorageInfoSurfaceBrush}" />
+                                            </Trigger>
+                                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                                <Setter TargetName="HeaderBorder" Property="BorderBrush" Value="{DynamicResource StorageBrandMidBrush}" />
                                             </Trigger>
                                             <Trigger Property="IsChecked" Value="True">
                                                 <Setter TargetName="HeaderBorder" Property="Background" Value="{DynamicResource StorageInfoSurfaceBrush}" />

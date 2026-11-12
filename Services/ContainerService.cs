@@ -38,7 +38,7 @@ public sealed class ContainerService : IContainerService, IDisposable
     {
         string filters = documentId.HasValue
             ? $"Operation.DocumentId=={documentId.Value},HidePairedRemainders==true"
-            : string.Empty;
+            : "IsActive==1";
 
         return await PostAsync<List<ContainerWithDetailDto>>(
             "api/Container/GetFilteredAndSortedContainerssWithDetails",

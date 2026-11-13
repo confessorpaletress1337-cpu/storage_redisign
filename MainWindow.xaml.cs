@@ -23,6 +23,6 @@ public partial class MainWindow : MetroWindow
         }
 
         _isLoaded = true;
-        await ((MainViewModel)DataContext).LoadAsync();
+        await ((MainViewModel)DataContext).LoadInitialAsync();
     }
 }

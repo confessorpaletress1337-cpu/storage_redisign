@@ -2,6 +2,7 @@ using StorageClient.Redesign.DTOs;
 using StorageClient.Redesign.Services;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Input;
@@ -12,6 +13,7 @@ public sealed class MainViewModel : ViewModelBase
 {
     private const string ContainerLoadKey = "main-containers";
     private const string DocumentSearchKey = "main-documents";
+    private const string HistoryLoadKey = "main-container-history";
     private const string ContainerLoadOperation = "Загрузка контейнеров";
 
     private readonly IContainerService _containerService;
@@ -19,11 +21,16 @@ public sealed class MainViewModel : ViewModelBase
     private readonly IThemeService _themeService;
     private readonly ITaskExecutionService _taskExecutionService;
     private readonly ICommandFactory _commandFactory;
+    private readonly IContainerHistoryGraphLayoutService _historyLayout;
     private AsyncRelayCommand? _refreshCommand;
     private RelayCommand? _clearFiltersCommand;
     private RelayCommand? _toggleThemeCommand;
+    private AsyncRelayCommand? _openHistoryDocumentCommand;
 
     private ContainerWithDetailDto? _selectedContainer;
+    private ContainerHistoryGraphViewModel _historyGraph = ContainerHistoryGraphViewModel.Empty;
+    private bool _isHistoryLoading;
+    private string _historyError = string.Empty;
     private string _containerNumberFilter = string.Empty;
     private string _articleFilter = string.Empty;
     private string _elementFilter = string.Empty;
@@ -43,13 +50,15 @@ public sealed class MainViewModel : ViewModelBase
         IAuthStateService authState,
         IThemeService themeService,
         ITaskExecutionService taskExecutionService,
-        ICommandFactory commandFactory)
+        ICommandFactory commandFactory,
+        IContainerHistoryGraphLayoutService historyLayout)
     {
         _containerService = containerService;
         _authState = authState;
         _themeService = themeService;
         _taskExecutionService = taskExecutionService;
         _commandFactory = commandFactory;
+        _historyLayout = historyLayout;
 
         ContainersView = CollectionViewSource.GetDefaultView(Containers);
         ContainersView.Filter = MatchesFilters;
@@ -69,6 +78,10 @@ public sealed class MainViewModel : ViewModelBase
     public ICommand ToggleThemeCommand => _toggleThemeCommand ??=
         _commandFactory.CreateCommand(ToggleTheme);
 
+    public ICommand OpenHistoryDocumentCommand => _openHistoryDocumentCommand ??=
+        _commandFactory.CreateCommand<ContainerHistoryViewModel>(
+            OpenHistoryDocumentAsync, "Открытие документа из истории", ShowError, item => item.HasDocument);
+
     public string Username => _authState.Username ?? "Пользователь";
     public string Permission => _authState.Permission;
     public bool IsDarkTheme => _themeService.IsDarkTheme;
@@ -78,6 +91,31 @@ public sealed class MainViewModel : ViewModelBase
         get => _selectedContainer;
         set => Set(ref _selectedContainer, value);
     }
+
+    public ContainerHistoryGraphViewModel HistoryGraph
+    {
+        get => _historyGraph;
+        private set => Set(ref _historyGraph, value);
+    }
+
+    public bool IsHistoryLoading
+    {
+        get => _isHistoryLoading;
+        private set => Set(ref _isHistoryLoading, value);
+    }
+
+    public string HistoryError
+    {
+        get => _historyError;
+        private set => Set(ref _historyError, value);
+    }
+
+    public bool HasHistory => HistoryGraph.SourceItems.Count > 0;
+
+    public string HistoryStatus => IsHistoryLoading ? "Загрузка истории…"
+        : !string.IsNullOrEmpty(HistoryError) ? HistoryError
+        : SelectedContainer is null ? "Выберите контейнер"
+        : HasHistory ? string.Empty : "Нет записей в истории";
 
     public string ContainerNumberFilter
     {
@@ -159,10 +197,14 @@ public sealed class MainViewModel : ViewModelBase
     public int ReservedCount => Containers.Count(item => item.IsActive == 1 && item.IsReserved == 1);
     public int DefectedCount => Containers.Count(item => item.IsActive == 1 && item.IsDefected == 1);
 
-    public Task LoadAsync() => _taskExecutionService.ExecuteWithDebounceAsync(
-        ContainerLoadKey, LoadContainersAsync, 0, ContainerLoadOperation, ShowError);
+    public Task LoadInitialAsync() => ScheduleContainerLoad(activeOnly: false);
 
-    private async Task LoadContainersAsync(CancellationToken cancellationToken)
+    public Task LoadAsync() => ScheduleContainerLoad(activeOnly: true);
+
+    private Task ScheduleContainerLoad(bool activeOnly) => _taskExecutionService.ExecuteWithDebounceAsync(
+        ContainerLoadKey, token => LoadContainersAsync(activeOnly, token), 0, ContainerLoadOperation, ShowError);
+
+    private async Task LoadContainersAsync(bool activeOnly, CancellationToken cancellationToken)
     {
         try
         {
@@ -170,7 +212,7 @@ public sealed class MainViewModel : ViewModelBase
             ErrorMessage = string.Empty;
 
             IReadOnlyList<ContainerWithDetailDto> loaded =
-                await _containerService.GetContainersAsync(SelectedDocument?.Id, cancellationToken);
+                await _containerService.GetContainersAsync(SelectedDocument?.Id, activeOnly, cancellationToken);
 
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -359,9 +401,56 @@ public sealed class MainViewModel : ViewModelBase
         _ = ScheduleDocumentLoad(0);
     }
 
+    private void LoadSelectedContainerHistory()
+    {
+        _taskExecutionService.CancelDebounce(HistoryLoadKey);
+        IsHistoryLoading = SelectedContainer is not null;
+        HistoryGraph = ContainerHistoryGraphViewModel.Empty;
+        HistoryError = string.Empty;
+        if (SelectedContainer is { Id: var containerId })
+        {
+            _ = _taskExecutionService.ExecuteWithDebounceAsync(
+                HistoryLoadKey, token => LoadHistoryAsync(containerId, token),
+                200, "Загрузка истории", message => HistoryError = message);
+        }
+    }
+
+    private async Task LoadHistoryAsync(int containerId, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var items = await _containerService.GetHistoryAsync(containerId, cancellationToken);
+            cancellationToken.ThrowIfCancellationRequested();
+            HistoryGraph = _historyLayout.Build(items.Select(item => new ContainerHistoryViewModel(item)).ToList());
+        }
+        finally
+        {
+            if (!cancellationToken.IsCancellationRequested)
+            {
+                IsHistoryLoading = false;
+            }
+        }
+    }
+
+    private async Task OpenHistoryDocumentAsync(ContainerHistoryViewModel item)
+    {
+        if (item.DocumentId is int documentId && documentId > 0)
+        {
+            string path = await _containerService.DownloadHistoryDocumentAsync(documentId);
+            using var process = Process.Start(new ProcessStartInfo(path) { UseShellExecute = true });
+        }
+    }
+
     protected override void OnPropertyChanged(string? propertyName)
     {
         base.OnPropertyChanged(propertyName);
+        if (propertyName == nameof(SelectedContainer))
+        {
+            LoadSelectedContainerHistory();
+            OnPropertyChanged(nameof(HistoryStatus));
+            return;
+        }
+
         if (_clearingFilters)
         {
             return;
@@ -395,6 +484,14 @@ public sealed class MainViewModel : ViewModelBase
                 break;
             case nameof(ErrorMessage):
                 OnPropertyChanged(nameof(HasError));
+                break;
+            case nameof(HistoryGraph):
+                OnPropertyChanged(nameof(HasHistory));
+                OnPropertyChanged(nameof(HistoryStatus));
+                break;
+            case nameof(IsHistoryLoading):
+            case nameof(HistoryError):
+                OnPropertyChanged(nameof(HistoryStatus));
                 break;
         }
     }

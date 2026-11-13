@@ -5,6 +5,7 @@
                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                  xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
                  xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+                 xmlns:controls="clr-namespace:StorageClient.Redesign.Controls"
                  mc:Ignorable="d"
                  Title="Склад"
                  Width="1480"
@@ -101,6 +102,78 @@
             </Setter>
         </Style>
 
+        <Style x:Key="RightPanelGroupBoxStyle" TargetType="GroupBox">
+            <Setter Property="Padding" Value="12,4,12,12" />
+            <Setter Property="Background" Value="{DynamicResource StorageSurfaceBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource StorageOutlineBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Foreground" Value="{DynamicResource StorageTextBrush}" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="VerticalContentAlignment" Value="Stretch" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="GroupBox">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="16">
+                            <Grid ClipToBounds="True">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+                                <ContentPresenter Margin="14,11,14,5"
+                                                  ContentSource="Header"
+                                                  TextElement.FontSize="14"
+                                                  TextElement.FontWeight="SemiBold"
+                                                  TextElement.Foreground="{TemplateBinding Foreground}" />
+                                <ContentPresenter Grid.Row="1"
+                                                  Margin="{TemplateBinding Padding}"
+                                                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                            </Grid>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="RightPanelSplitterStyle" TargetType="GridSplitter"
+               BasedOn="{StaticResource StorageGridSplitterStyle}">
+            <Setter Property="Width" Value="Auto" />
+            <Setter Property="Height" Value="9" />
+            <Setter Property="ResizeDirection" Value="Rows" />
+            <Setter Property="Cursor" Value="SizeNS" />
+            <Setter Property="Focusable" Value="True" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="GridSplitter">
+                        <Grid Background="Transparent">
+                            <Border x:Name="Grip"
+                                    Margin="16,0"
+                                    Height="1"
+                                    VerticalAlignment="Center"
+                                    Background="{DynamicResource StorageOutlineBrush}" />
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Grip" Property="Height" Value="3" />
+                                <Setter TargetName="Grip" Property="Background" Value="{DynamicResource StorageBrandMidBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsDragging" Value="True">
+                                <Setter TargetName="Grip" Property="Height" Value="3" />
+                                <Setter TargetName="Grip" Property="Background" Value="{DynamicResource StorageBrandMidBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter TargetName="Grip" Property="Height" Value="3" />
+                                <Setter TargetName="Grip" Property="Background" Value="{DynamicResource StorageBrandMidBrush}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <Style x:Key="StorageDataGridStyle" TargetType="DataGrid">
             <Setter Property="Background" Value="{DynamicResource StorageSurfaceBrush}" />
             <Setter Property="Foreground" Value="{DynamicResource StorageTextBrush}" />
@@ -123,7 +196,7 @@
             <Setter Property="SelectionMode" Value="Single" />
             <Setter Property="SelectionUnit" Value="FullRow" />
             <Setter Property="AutoGenerateColumns" Value="False" />
-            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
             <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
         </Style>
 
@@ -142,6 +215,26 @@
             <Setter Property="Padding" Value="0" />
             <Setter Property="VerticalContentAlignment" Value="Center" />
             <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        </Style>
+
+        <Style x:Key="ContainerGridCellStyle" TargetType="DataGridCell"
+               BasedOn="{StaticResource {x:Type DataGridCell}}">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="{DynamicResource StorageTextBrush}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="DataGridCell">
+                        <Border Background="{TemplateBinding Background}">
+                            <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="{Binding Background, RelativeSource={RelativeSource AncestorType=DataGridRow}}" />
+                </Trigger>
+            </Style.Triggers>
         </Style>
 
         <Style x:Key="DataGridTextStyle" TargetType="TextBlock">
@@ -264,21 +357,20 @@
             </Setter>
         </Style>
 
-        <Style TargetType="DataGridRow">
+        <Style x:Key="ContainerGridRowStyle" TargetType="DataGridRow">
             <Setter Property="Foreground" Value="{DynamicResource StorageTextBrush}" />
             <Setter Property="BorderThickness" Value="0" />
             <Setter Property="FocusVisualStyle" Value="{x:Null}" />
             <Style.Triggers>
                 <Trigger Property="IsSelected" Value="True">
-                    <Setter Property="Background" Value="{DynamicResource StorageInfoSurfaceBrush}" />
-                    <Setter Property="Foreground" Value="{DynamicResource StorageTextBrush}" />
+                    <Setter Property="Background" Value="{DynamicResource StorageInactiveSelectionBrush}" />
                 </Trigger>
                 <MultiTrigger>
                     <MultiTrigger.Conditions>
                         <Condition Property="IsSelected" Value="True" />
-                        <Condition Property="IsMouseOver" Value="True" />
+                        <Condition Property="Selector.IsSelectionActive" Value="True" />
                     </MultiTrigger.Conditions>
-                    <Setter Property="Background" Value="{DynamicResource StorageInfoSurfaceBrush}" />
+                    <Setter Property="Background" Value="{DynamicResource StorageSelectionBrush}" />
                 </MultiTrigger>
             </Style.Triggers>
         </Style>
@@ -695,12 +787,14 @@
                         <DataGrid Grid.Row="1"
                                   ItemsSource="{Binding ContainersView}"
                                   SelectedItem="{Binding SelectedContainer}"
+                                  CellStyle="{StaticResource ContainerGridCellStyle}"
+                                  RowStyle="{StaticResource ContainerGridRowStyle}"
                                   Style="{StaticResource StorageDataGridStyle}">
                             <DataGrid.Columns>
-                                <DataGridTextColumn Width="78" Header="№" Binding="{Binding DisplayName}" ElementStyle="{StaticResource DataGridTextStyle}" />
+                                <DataGridTextColumn Width="78" Header="№" Binding="{Binding DisplayName}" SortMemberPath="Name" ElementStyle="{StaticResource DataGridTextStyle}" />
                                 <DataGridTextColumn Width="95" Header="Ячейка" Binding="{Binding CellName, TargetNullValue=—}" ElementStyle="{StaticResource DataGridTextStyle}" />
                                 <DataGridTextColumn Width="140" Header="Расположение" Binding="{Binding CellAddressName, TargetNullValue=—}" ElementStyle="{StaticResource DataGridTextStyle}" />
-                                <DataGridTextColumn Width="*" MinWidth="220" Header="Элемент" Binding="{Binding ElementName, TargetNullValue=—}" ElementStyle="{StaticResource DataGridTextStyle}" />
+                                <DataGridTextColumn Width="*" MinWidth="220" Header="Элемент" Binding="{Binding ElementName, TargetNullValue=—}" CanUserSort="False" ElementStyle="{StaticResource DataGridTextStyle}" />
                                 <DataGridTextColumn Width="125" Header="Тип" Binding="{Binding ElementType, TargetNullValue=—}" ElementStyle="{StaticResource DataGridTextStyle}" />
                                 <DataGridTextColumn Width="82" Header="Кол-во" Binding="{Binding Count}" ElementStyle="{StaticResource DataGridTextStyle}" />
                                 <DataGridTextColumn Width="100" Header="Цена" Binding="{Binding Price, TargetNullValue=—}" ElementStyle="{StaticResource DataGridTextStyle}" />
@@ -773,143 +867,211 @@
                               Panel.ZIndex="2"
                               Style="{StaticResource StorageGridSplitterStyle}" />
 
-                <Border Grid.Column="2" Style="{StaticResource StorageCardStyle}" CornerRadius="16">
-                    <ScrollViewer VerticalScrollBarVisibility="Auto">
-                        <StackPanel Margin="20">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <StackPanel>
-                                    <TextBlock Text="Карточка контейнера"
-                                               FontSize="15"
-                                               FontWeight="SemiBold"
-                                               Foreground="{DynamicResource StorageTextBrush}" />
-                                    <TextBlock Margin="0,4,0,0"
-                                               Text="Данные выбранной строки"
-                                               FontSize="10"
-                                               Foreground="{DynamicResource StorageMutedTextBrush}" />
-                                </StackPanel>
-                                <materialDesign:PackIcon Grid.Column="1"
-                                                         Width="22"
-                                                         Height="22"
-                                                         Foreground="{DynamicResource StorageBrandMidBrush}"
-                                                         Kind="PackageVariantClosed" />
-                            </Grid>
+                <Grid Grid.Column="2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="3*" MinHeight="200" />
+                        <RowDefinition Height="9" />
+                        <RowDefinition Height="2*" MinHeight="130" />
+                    </Grid.RowDefinitions>
 
-                            <Border Margin="0,18,0,0"
-                                    Padding="14"
-                                    Background="{DynamicResource StorageSurfaceMutedBrush}"
-                                    CornerRadius="12">
-                                <StackPanel>
-                                    <TextBlock Text="{Binding SelectedContainer.ElementName, TargetNullValue=Контейнер не выбран}"
-                                               FontSize="16"
-                                               FontWeight="SemiBold"
-                                               TextWrapping="Wrap"
-                                               Foreground="{DynamicResource StorageTextBrush}" />
-                                    <TextBlock Margin="0,6,0,0"
-                                               Text="{Binding SelectedContainer.Name, StringFormat=Контейнер № {0}, TargetNullValue=Выберите строку в таблице}"
-                                               FontSize="11"
-                                               Foreground="{DynamicResource StorageMutedTextBrush}" />
-                                </StackPanel>
-                            </Border>
-
-                            <TextBlock Margin="0,20,0,12"
-                                       Text="РАЗМЕЩЕНИЕ"
-                                       FontSize="9"
-                                       FontWeight="Bold"
-                                       Foreground="{DynamicResource StorageMutedTextBrush}" />
-
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-                                <StackPanel Margin="0,0,8,0">
-                                    <TextBlock Text="Ячейка" Style="{StaticResource DetailLabelStyle}" />
-                                    <TextBlock Text="{Binding SelectedContainer.CellName, TargetNullValue=—}" Style="{StaticResource DetailValueStyle}" />
-                                </StackPanel>
-                                <StackPanel Grid.Column="1" Margin="8,0,0,0">
-                                    <TextBlock Text="Адрес" Style="{StaticResource DetailLabelStyle}" />
-                                    <TextBlock Text="{Binding SelectedContainer.CellAddressName, TargetNullValue=—}" Style="{StaticResource DetailValueStyle}" />
-                                </StackPanel>
-                            </Grid>
-
-                            <Separator Margin="0,18" Background="{DynamicResource StorageOutlineBrush}" />
-
-                            <TextBlock Text="ПАРАМЕТРЫ"
-                                       FontSize="9"
-                                       FontWeight="Bold"
-                                       Foreground="{DynamicResource StorageMutedTextBrush}" />
-
-                            <Grid Margin="0,12,0,0">
-                                <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
-                                <StackPanel Margin="0,0,8,0">
-                                    <TextBlock Text="Артикул" Style="{StaticResource DetailLabelStyle}" />
-                                    <TextBlock Text="{Binding SelectedContainer.Article, TargetNullValue=—}" Style="{StaticResource DetailValueStyle}" />
-                                </StackPanel>
-                                <StackPanel Grid.Column="1" Margin="8,0,0,0">
-                                    <TextBlock Text="Количество" Style="{StaticResource DetailLabelStyle}" />
-                                    <TextBlock Text="{Binding SelectedContainer.Count, TargetNullValue=—}" Style="{StaticResource DetailValueStyle}" />
-                                </StackPanel>
-                            </Grid>
-
-                            <Grid Margin="0,16,0,0">
-                                <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
-                                <StackPanel Margin="0,0,8,0">
-                                    <TextBlock Text="Тип элемента" Style="{StaticResource DetailLabelStyle}" />
-                                    <TextBlock Text="{Binding SelectedContainer.ElementType, TargetNullValue=—}" Style="{StaticResource DetailValueStyle}" />
-                                </StackPanel>
-                                <StackPanel Grid.Column="1" Margin="8,0,0,0">
-                                    <TextBlock Text="Подтип" Style="{StaticResource DetailLabelStyle}" />
-                                    <TextBlock Text="{Binding SelectedContainer.ElementSubtype, TargetNullValue=—}" Style="{StaticResource DetailValueStyle}" />
-                                </StackPanel>
-                            </Grid>
-
-                            <Grid Margin="0,16,0,0">
-                                <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
-                                <StackPanel Margin="0,0,8,0">
-                                    <TextBlock Text="Упаковка" Style="{StaticResource DetailLabelStyle}" />
-                                    <TextBlock Text="{Binding SelectedContainer.PackageTypeName, TargetNullValue=—}" Style="{StaticResource DetailValueStyle}" />
-                                </StackPanel>
-                                <StackPanel Grid.Column="1" Margin="8,0,0,0">
-                                    <TextBlock Text="Цена" Style="{StaticResource DetailLabelStyle}" />
-                                    <TextBlock Text="{Binding SelectedContainer.Price, TargetNullValue=—}" Style="{StaticResource DetailValueStyle}" />
-                                </StackPanel>
-                            </Grid>
-
-                            <Separator Margin="0,18" Background="{DynamicResource StorageOutlineBrush}" />
-
-                            <TextBlock Text="Описание" Style="{StaticResource DetailLabelStyle}" />
-                            <TextBlock Margin="0,7,0,0"
-                                       MinHeight="42"
-                                       Text="{Binding SelectedContainer.Description, TargetNullValue=Описание отсутствует}"
+                    <GroupBox Header="История контейнера" Style="{StaticResource RightPanelGroupBoxStyle}">
+                        <Grid>
+                            <TextBlock Margin="0,4,0,0"
+                                       Text="{Binding HistoryStatus}"
                                        TextWrapping="Wrap"
-                                       FontSize="12"
-                                       LineHeight="18"
-                                       Foreground="{DynamicResource StorageTextBrush}" />
+                                       Foreground="{DynamicResource StorageMutedTextBrush}">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding HasHistory}" Value="True">
+                                                <Setter Property="Visibility" Value="Collapsed" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                            <TabControl Visibility="{Binding HasHistory, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <TabItem Header="Схема">
+                                    <controls:ContainerHistoryGraphControl
+                                        Graph="{Binding HistoryGraph}"
+                                        OpenDocumentCommand="{Binding OpenHistoryDocumentCommand}" />
+                                </TabItem>
+                                <TabItem Header="Список">
+                                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                                        <ItemsControl ItemsSource="{Binding HistoryGraph.SourceItems}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Border Margin="0,0,0,6" Padding="10"
+                                                            CornerRadius="8"
+                                                            Background="{DynamicResource StorageSurfaceMutedBrush}">
+                                                        <StackPanel>
+                                                            <TextBlock Text="{Binding DisplayOperationName}"
+                                                                       Style="{StaticResource DetailValueStyle}" />
+                                                            <TextBlock Margin="0,3,0,0"
+                                                                       Text="{Binding OperationDateText}"
+                                                                       Style="{StaticResource DetailLabelStyle}" />
+                                                            <TextBlock Margin="0,4,0,0"
+                                                                       Text="{Binding Count, StringFormat=Контейнер · {0} шт.}"
+                                                                       Visibility="{Binding ContainerVisibility}"
+                                                                       Foreground="{DynamicResource StorageTextBrush}" />
+                                                            <TextBlock Margin="0,4,0,0"
+                                                                       Text="{Binding Count, StringFormat=Резерв · {0} шт.}"
+                                                                       Visibility="{Binding ReserveVisibility}"
+                                                                       Foreground="{DynamicResource StorageTextBrush}" />
+                                                            <TextBlock Margin="0,4,0,0"
+                                                                       Text="{Binding Count, StringFormat=Выдача · {0} шт.}"
+                                                                       Visibility="{Binding IssueVisibility}"
+                                                                       Foreground="{DynamicResource StorageTextBrush}" />
+                                                            <TextBlock Margin="0,4,0,0"
+                                                                       Text="{Binding LastName, StringFormat=Сотрудник: {0}}"
+                                                                       TextWrapping="Wrap"
+                                                                       Visibility="{Binding UserVisibility}"
+                                                                       Style="{StaticResource DetailLabelStyle}" />
+                                                            <TextBlock Margin="0,4,0,0"
+                                                                       Text="{Binding Description}"
+                                                                       TextWrapping="Wrap"
+                                                                       Visibility="{Binding DescriptionVisibility}"
+                                                                       Style="{StaticResource DetailLabelStyle}" />
+                                                            <TextBlock Margin="0,4,0,0"
+                                                                       Text="{Binding BasketContextText}"
+                                                                       TextWrapping="Wrap"
+                                                                       Visibility="{Binding BasketContextVisibility}"
+                                                                       Style="{StaticResource DetailLabelStyle}" />
+                                                            <Button Margin="0,8,0,0"
+                                                                    HorizontalAlignment="Left"
+                                                                    Command="{Binding DataContext.OpenHistoryDocumentCommand, RelativeSource={RelativeSource AncestorType=TabControl}}"
+                                                                    CommandParameter="{Binding}"
+                                                                    Content="Открыть документ"
+                                                                    Visibility="{Binding HasDocument, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                                        </StackPanel>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </ScrollViewer>
+                                </TabItem>
+                            </TabControl>
+                        </Grid>
+                    </GroupBox>
 
-                            <Border Margin="0,20,0,0"
-                                    Padding="12,10"
-                                    Background="{DynamicResource StorageInfoSurfaceBrush}"
-                                    CornerRadius="10">
-                                <Grid>
-                                    <Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
-                                    <materialDesign:PackIcon Width="17" Height="17" Foreground="{DynamicResource StorageInfoBrush}" Kind="ClockOutline" />
-                                    <StackPanel Grid.Column="1" Margin="9,0,0,0">
-                                        <TextBlock Text="Добавлен на склад" FontSize="10" Foreground="{DynamicResource StorageInfoBrush}" />
-                                        <TextBlock Margin="0,3,0,0"
-                                                   Text="{Binding SelectedContainer.DateAdded, StringFormat={}{0:dd.MM.yyyy HH:mm}, TargetNullValue=—}"
-                                                   FontSize="11"
+                    <GridSplitter Grid.Row="1" Style="{StaticResource RightPanelSplitterStyle}" />
+
+                    <GroupBox Grid.Row="2" Header="Информация о контейнере" Style="{StaticResource RightPanelGroupBoxStyle}">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                            <StackPanel>
+                                <Border Margin="0"
+                                        Padding="14"
+                                        Background="{DynamicResource StorageSurfaceMutedBrush}"
+                                        CornerRadius="12">
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding SelectedContainer.ElementName, TargetNullValue=Контейнер не выбран}"
+                                                   FontSize="16"
                                                    FontWeight="SemiBold"
+                                                   TextWrapping="Wrap"
                                                    Foreground="{DynamicResource StorageTextBrush}" />
+                                        <TextBlock Margin="0,6,0,0"
+                                                   Text="{Binding SelectedContainer.Name, StringFormat=Контейнер № {0}, TargetNullValue=Выберите строку в таблице}"
+                                                   FontSize="11"
+                                                   Foreground="{DynamicResource StorageMutedTextBrush}" />
+                                    </StackPanel>
+                                </Border>
+
+                                <TextBlock Margin="0,20,0,12"
+                                           Text="РАЗМЕЩЕНИЕ"
+                                           FontSize="9"
+                                           FontWeight="Bold"
+                                           Foreground="{DynamicResource StorageMutedTextBrush}" />
+
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Margin="0,0,8,0">
+                                        <TextBlock Text="Ячейка" Style="{StaticResource DetailLabelStyle}" />
+                                        <TextBlock Text="{Binding SelectedContainer.CellName, TargetNullValue=—}" Style="{StaticResource DetailValueStyle}" />
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1" Margin="8,0,0,0">
+                                        <TextBlock Text="Адрес" Style="{StaticResource DetailLabelStyle}" />
+                                        <TextBlock Text="{Binding SelectedContainer.CellAddressName, TargetNullValue=—}" Style="{StaticResource DetailValueStyle}" />
                                     </StackPanel>
                                 </Grid>
-                            </Border>
-                        </StackPanel>
-                    </ScrollViewer>
-                </Border>
+
+                                <Separator Margin="0,18" Background="{DynamicResource StorageOutlineBrush}" />
+
+                                <TextBlock Text="ПАРАМЕТРЫ"
+                                           FontSize="9"
+                                           FontWeight="Bold"
+                                           Foreground="{DynamicResource StorageMutedTextBrush}" />
+
+                                <Grid Margin="0,12,0,0">
+                                    <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                                    <StackPanel Margin="0,0,8,0">
+                                        <TextBlock Text="Артикул" Style="{StaticResource DetailLabelStyle}" />
+                                        <TextBlock Text="{Binding SelectedContainer.Article, TargetNullValue=—}" Style="{StaticResource DetailValueStyle}" />
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1" Margin="8,0,0,0">
+                                        <TextBlock Text="Количество" Style="{StaticResource DetailLabelStyle}" />
+                                        <TextBlock Text="{Binding SelectedContainer.Count, TargetNullValue=—}" Style="{StaticResource DetailValueStyle}" />
+                                    </StackPanel>
+                                </Grid>
+
+                                <Grid Margin="0,16,0,0">
+                                    <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                                    <StackPanel Margin="0,0,8,0">
+                                        <TextBlock Text="Тип элемента" Style="{StaticResource DetailLabelStyle}" />
+                                        <TextBlock Text="{Binding SelectedContainer.ElementType, TargetNullValue=—}" Style="{StaticResource DetailValueStyle}" />
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1" Margin="8,0,0,0">
+                                        <TextBlock Text="Подтип" Style="{StaticResource DetailLabelStyle}" />
+                                        <TextBlock Text="{Binding SelectedContainer.ElementSubtype, TargetNullValue=—}" Style="{StaticResource DetailValueStyle}" />
+                                    </StackPanel>
+                                </Grid>
+
+                                <Grid Margin="0,16,0,0">
+                                    <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                                    <StackPanel Margin="0,0,8,0">
+                                        <TextBlock Text="Упаковка" Style="{StaticResource DetailLabelStyle}" />
+                                        <TextBlock Text="{Binding SelectedContainer.PackageTypeName, TargetNullValue=—}" Style="{StaticResource DetailValueStyle}" />
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1" Margin="8,0,0,0">
+                                        <TextBlock Text="Цена" Style="{StaticResource DetailLabelStyle}" />
+                                        <TextBlock Text="{Binding SelectedContainer.Price, TargetNullValue=—}" Style="{StaticResource DetailValueStyle}" />
+                                    </StackPanel>
+                                </Grid>
+
+                                <Separator Margin="0,18" Background="{DynamicResource StorageOutlineBrush}" />
+
+                                <TextBlock Text="Описание" Style="{StaticResource DetailLabelStyle}" />
+                                <TextBlock Margin="0,7,0,0"
+                                           MinHeight="42"
+                                           Text="{Binding SelectedContainer.Description, TargetNullValue=Описание отсутствует}"
+                                           TextWrapping="Wrap"
+                                           FontSize="12"
+                                           LineHeight="18"
+                                           Foreground="{DynamicResource StorageTextBrush}" />
+
+                                <Border Margin="0,20,0,0"
+                                        Padding="12,10"
+                                        Background="{DynamicResource StorageInfoSurfaceBrush}"
+                                        CornerRadius="10">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                                        <materialDesign:PackIcon Width="17" Height="17" Foreground="{DynamicResource StorageInfoBrush}" Kind="ClockOutline" />
+                                        <StackPanel Grid.Column="1" Margin="9,0,0,0">
+                                            <TextBlock Text="Добавлен на склад" FontSize="10" Foreground="{DynamicResource StorageInfoBrush}" />
+                                            <TextBlock Margin="0,3,0,0"
+                                                       Text="{Binding SelectedContainer.DateAdded, StringFormat={}{0:dd.MM.yyyy HH:mm}, TargetNullValue=—}"
+                                                       FontSize="11"
+                                                       FontWeight="SemiBold"
+                                                       Foreground="{DynamicResource StorageTextBrush}" />
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </GroupBox>
+                </Grid>
             </Grid>
         </Grid>
     </Grid>

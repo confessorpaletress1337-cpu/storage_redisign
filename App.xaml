@@ -18,6 +18,7 @@
 
                 <ResourceDictionary Source="/Themes/Colors.Light.xaml" />
                 <ResourceDictionary Source="/Themes/Controls.xaml" />
+                <ResourceDictionary Source="/Themes/ScrollBars.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />

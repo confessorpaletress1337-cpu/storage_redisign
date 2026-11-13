@@ -11,6 +11,8 @@
     <Color x:Key="StorageTextColor">#F2F7FA</Color>
     <Color x:Key="StorageMutedTextColor">#A9BAC5</Color>
     <Color x:Key="StorageOutlineColor">#394953</Color>
+    <Color x:Key="StorageSelectionColor">#24505A</Color>
+    <Color x:Key="StorageInactiveSelectionColor">#2A4048</Color>
 
     <Color x:Key="StorageSuccessColor">#78D6A5</Color>
     <Color x:Key="StorageSuccessSurfaceColor">#183D2B</Color>
@@ -31,6 +33,8 @@
     <SolidColorBrush x:Key="StorageTextBrush" Color="{DynamicResource StorageTextColor}" />
     <SolidColorBrush x:Key="StorageMutedTextBrush" Color="{DynamicResource StorageMutedTextColor}" />
     <SolidColorBrush x:Key="StorageOutlineBrush" Color="{DynamicResource StorageOutlineColor}" />
+    <SolidColorBrush x:Key="StorageSelectionBrush" Color="{DynamicResource StorageSelectionColor}" />
+    <SolidColorBrush x:Key="StorageInactiveSelectionBrush" Color="{DynamicResource StorageInactiveSelectionColor}" />
     <SolidColorBrush x:Key="StorageSuccessBrush" Color="{DynamicResource StorageSuccessColor}" />
     <SolidColorBrush x:Key="StorageSuccessSurfaceBrush" Color="{DynamicResource StorageSuccessSurfaceColor}" />
     <SolidColorBrush x:Key="StorageWarningBrush" Color="{DynamicResource StorageWarningColor}" />
